@@ -33,11 +33,11 @@ void Application::Render(void)
 {
 	// ...
 	//Color a square in the middle of the screen
-	for (int x = 0; x < framebuffer.width; x++)
+	for (int x = framebuffer.width/2 - 100; x < framebuffer.width/2 +100; x++)
 	{
-		for (int y = 0; y < framebuffer.height; y++)
+		for (int y = framebuffer.height/2 -100; y < framebuffer.height/2 + 100; y++)
 		{
-			framebuffer.SetPixel(x, y, Color(0, 0, 255)); // Pass a Color object instead of an integer
+			framebuffer.SetPixel(x, y, Color(255,255,0)); // Pass a Color object instead of an integer
 		}
 	}
 	framebuffer.Render();
