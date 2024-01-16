@@ -32,8 +32,7 @@ void Application::Init(void)
 void Application::Render(void)
 {
 	// ...
-
-	framebuffer.DrawRect(100, 100, 200, 200, Color::WHITE, 3, true, Color::GREEN);
+	framebuffer.DrawCircle(450, 190, 150, Color::RED,1,false,Color::BLACK);
 	framebuffer.Render();
 }
 

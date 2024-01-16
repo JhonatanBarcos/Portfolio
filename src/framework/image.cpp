@@ -378,8 +378,8 @@ void Image::DrawLineDDA(int x0, int y0, int x1, int y1, const Color& c){
 	if (dx==0 && dy==0){
 		SetPixel(x0,y0,c);
 	} else {
-		float vx = dx/d;
-		float vy = dy/d;
+		int vx = dx/d;
+		int vy = dy/d;
 
 		int x = x0;
 		int y = y0;
@@ -390,10 +390,52 @@ void Image::DrawLineDDA(int x0, int y0, int x1, int y1, const Color& c){
 			y += vy;
 		}
 	}
-
-
 }
 
+void Image::DrawCircle(int x_c, int y_c, int r, const Color& borderColor, int borderWidth, bool isFilled, const Color& fillColor){
+	int x = 0;
+	int y = r;
+	int p = 1 - r;
+
+	SetPixel(x_c+x, y_c+y, borderColor);
+	SetPixel(x_c+y, y_c+x, borderColor);
+	SetPixel(x_c-x, y_c+y, borderColor);
+	SetPixel(x_c+x, y_c-y, borderColor);
+	SetPixel(x_c-x, y_c-y, borderColor);
+	SetPixel(x_c+y, y_c-x, borderColor);
+	SetPixel(x_c-y, y_c+x, borderColor);
+	SetPixel(x_c-y, y_c-x, borderColor);
+
+	while (x<y){
+		if (p < 0){
+		x = x+1;
+		y = y;
+		p = p + 2*x + 1;
+		SetPixel(x_c+x, y_c+y, borderColor);
+		SetPixel(x_c+y, y_c+x, borderColor);
+		SetPixel(x_c-x, y_c+y, borderColor);
+		SetPixel(x_c+x, y_c-y, borderColor);
+		SetPixel(x_c-x, y_c-y, borderColor);
+		SetPixel(x_c+y, y_c-x, borderColor);
+		SetPixel(x_c-y, y_c+x, borderColor);
+		SetPixel(x_c-y, y_c-x, borderColor);
+
+		} else if ( p >= 0){
+			x = x+1;
+			y = y-1;
+			p = p + 2*(x-y) + 1;
+		SetPixel(x_c+x, y_c+y, borderColor);
+		SetPixel(x_c+y, y_c+x, borderColor);
+		SetPixel(x_c-x, y_c+y, borderColor);
+		SetPixel(x_c+x, y_c-y, borderColor);
+		SetPixel(x_c-x, y_c-y, borderColor);
+		SetPixel(x_c+y, y_c-x, borderColor);
+		SetPixel(x_c-y, y_c+x, borderColor);
+		SetPixel(x_c-y, y_c-x, borderColor);
+		}
+	}
+}
+	
 #ifndef IGNORE_LAMBDAS
 
 // You can apply and algorithm for two images and store the result in the first one
