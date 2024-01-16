@@ -32,20 +32,15 @@ void Application::Init(void)
 void Application::Render(void)
 {
 	// ...
-	//Color a square in the middle of the screen
-	for (int x = framebuffer.width/2 - 100; x < framebuffer.width/2 +100; x++)
-	{
-		for (int y = framebuffer.height/2 -100; y < framebuffer.height/2 + 100; y++)
-		{
-			framebuffer.SetPixel(x, y, Color(255,255,0)); // Pass a Color object instead of an integer
-		}
-	}
+
+
 	framebuffer.Render();
 }
 
 // Called after render
 void Application::Update(float seconds_elapsed)
 {
+
 
 }
 
