@@ -32,6 +32,8 @@ void Application::Init(void)
 void Application::Render(void)
 {
 	// ...
+		// Here you can add your code to fill the image
+	framebuffer.SetPixel(100, 100, Color(255,255,0));
 
 	framebuffer.Render();
 }
