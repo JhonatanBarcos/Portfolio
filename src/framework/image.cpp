@@ -309,7 +309,7 @@ bool Image::SaveTGA(const char* filename)
 	return true;
 }
 
-void Image::DrawRect(int x, int y, int w, int h, const Color& c)
+void Image::DrawRectOld(int x, int y, int w, int h, const Color& c)
 {
 	for (int i = 0; i < w; ++i) {
 		SetPixel(x + i, y, c);
@@ -319,6 +319,54 @@ void Image::DrawRect(int x, int y, int w, int h, const Color& c)
 	for (int j = 0; j < h; ++j) {
 		SetPixel(x, y + j, c);
 		SetPixel(x + w - 1, y + j, c);
+	}
+}
+
+void Image::DrawRect(int x, int y, int w, int h, const Color& borderColor, int borderWidth, bool isFilled, const Color& fillColor){
+	if (isFilled){
+		// Fill the rectangle
+		for( int i = x; i < (x + w); ++i)
+		{
+			for( int j = y; j < (y + h); ++j)
+			{
+				SetPixel(i, j, fillColor);
+			}
+		}
+
+		// Draw the rectangle border
+		for (int i = 0; i < w; ++i) {
+			//border width loop
+			for (int k = 0; k < borderWidth; ++k){
+				SetPixel(x + i, y + k, borderColor);
+				SetPixel(x + i, y + h - 1 - k, borderColor);
+			}
+		}
+
+		for (int j = 0; j < h; ++j) {
+			//border width loop
+			for (int k = 0; k < borderWidth; ++k){
+				SetPixel(x + k, y + j, borderColor);
+				SetPixel(x + w - 1 - k, y + j, borderColor);
+			}
+		}
+	
+	} else {
+		// Draw only the rectangle border
+		for (int i = 0; i < w; ++i) {
+			//border width loop
+			for (int k = 0; k < borderWidth; ++k){
+				SetPixel(x + i, y + k, borderColor);
+				SetPixel(x + i, y + h - 1 - k, borderColor);
+			}
+		}
+
+		for (int j = 0; j < h; ++j) {
+			//border width loop
+			for (int k = 0; k < borderWidth; ++k){
+				SetPixel(x + k, y + j, borderColor);
+				SetPixel(x + w - 1 - k, y + j, borderColor);
+			}
+		}
 	}
 }
 

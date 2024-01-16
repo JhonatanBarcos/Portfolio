@@ -33,7 +33,7 @@ void Application::Render(void)
 {
 	// ...
 
-
+	framebuffer.DrawRect(100, 100, 200, 200, Color::WHITE, 3, true, Color::GREEN);
 	framebuffer.Render();
 }
 
