@@ -77,6 +77,7 @@ public:
 	bool LoadPNG(const char* filename, bool flip_y = true);
 	bool LoadTGA(const char* filename, bool flip_y = false);
 	bool SaveTGA(const char* filename);
+	void DrawImage(const Image& image, int x, int y, bool top);
 
 	void DrawRectOld(int x, int y, int w, int h, const Color& c);
 	void DrawRect(int x, int y, int w, int h, const Color& borderColor, int borderWidth, bool isFilled, const Color& fillColor);
@@ -127,4 +128,16 @@ public:
 	inline void SetPixel(unsigned int x, unsigned int y, const float& v) { pixels[y * width + x] = v; }
 
 	void Resize(unsigned int width, unsigned int height);
+};
+
+class Button
+{
+	private:
+		int x;
+		int y;
+		const Image& image;
+
+	public:
+		Button(int x, int y, const Image& image);
+		bool IsMouseInside(Vector2 mousePosition);
 };

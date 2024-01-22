@@ -29,10 +29,15 @@ void Application::Init(void)
 }
 
 // Render one frame
+Image Toolbar;
 void Application::Render(void)
 {
 	// ...
-	framebuffer.DrawCircle(450, 190, 150, Color::RED,1,false,Color::BLACK);
+	//draw image
+
+	bool success = framebuffer.LoadPNG("images/toolbar.png", false);
+	framebuffer.DrawImage(Toolbar,0 ,0 , success);
+	
 	framebuffer.Render();
 }
 

@@ -309,6 +309,22 @@ bool Image::SaveTGA(const char* filename)
 	return true;
 }
 
+void Image::DrawImage(const Image& image, int x, int y, bool top){
+    if (top){
+        for (int i = 0; i < image.width; ++i) {
+            for (int j = 0; j < image.height; ++j) {
+                SetPixel(x + i, y + j, image.GetPixel(i, j));
+            }
+        }
+    } else {
+        for (int i = 0; i < image.width; ++i) {
+            for (int j = 0; j < image.height; ++j) {
+                SetPixelSafe(x + i, height - 1 - (y + j), image.GetPixel(i, j));
+            }
+        }
+    }
+}
+
 void Image::DrawRectOld(int x, int y, int w, int h, const Color& c)
 {
 	for (int i = 0; i < w; ++i) {
@@ -406,35 +422,83 @@ void Image::DrawCircle(int x_c, int y_c, int r, const Color& borderColor, int bo
 	SetPixel(x_c-y, y_c+x, borderColor);
 	SetPixel(x_c-y, y_c-x, borderColor);
 
-	while (x<y){
-		if (p < 0){
-		x = x+1;
-		y = y;
-		p = p + 2*x + 1;
-		SetPixel(x_c+x, y_c+y, borderColor);
-		SetPixel(x_c+y, y_c+x, borderColor);
-		SetPixel(x_c-x, y_c+y, borderColor);
-		SetPixel(x_c+x, y_c-y, borderColor);
-		SetPixel(x_c-x, y_c-y, borderColor);
-		SetPixel(x_c+y, y_c-x, borderColor);
-		SetPixel(x_c-y, y_c+x, borderColor);
-		SetPixel(x_c-y, y_c-x, borderColor);
+	if (isFilled){
+		// Fill the circle using x^2+y^2 <= r^2
+		for( int i = x_c-r; i < (x_c + r); ++i)
+		{
+			for( int j = y_c-r; j < (y_c + r); ++j)
+			{
+				if (pow(i-x_c,2) + pow(j-y_c,2) <= pow(r,2)){
+					SetPixel(i, j, fillColor);
+				}
+			}
+		}
 
-		} else if ( p >= 0){
-			x = x+1;
-			y = y-1;
-			p = p + 2*(x-y) + 1;
-		SetPixel(x_c+x, y_c+y, borderColor);
-		SetPixel(x_c+y, y_c+x, borderColor);
-		SetPixel(x_c-x, y_c+y, borderColor);
-		SetPixel(x_c+x, y_c-y, borderColor);
-		SetPixel(x_c-x, y_c-y, borderColor);
-		SetPixel(x_c+y, y_c-x, borderColor);
-		SetPixel(x_c-y, y_c+x, borderColor);
-		SetPixel(x_c-y, y_c-x, borderColor);
+		//Border circle using Mid Point algorithm
+		while (x<y){
+			if (p < 0){
+				x = x+1;
+				y = y;
+				p = p + 2*x + 1;
+					SetPixel(x_c+x, y_c+y, borderColor);
+					SetPixel(x_c+y, y_c+x, borderColor);
+					SetPixel(x_c-x, y_c+y, borderColor);
+					SetPixel(x_c+x, y_c-y, borderColor);
+					SetPixel(x_c-x, y_c-y, borderColor);
+					SetPixel(x_c+y, y_c-x, borderColor);
+					SetPixel(x_c-y, y_c+x, borderColor);
+					SetPixel(x_c-y, y_c-x, borderColor);
+							
+
+			} else if ( p >= 0){
+				x = x+1;
+				y = y-1;
+				p = p + 2*(x-y) + 1;
+					SetPixel(x_c+x, y_c+y, borderColor);
+					SetPixel(x_c+y, y_c+x, borderColor);
+					SetPixel(x_c-x, y_c+y, borderColor);
+					SetPixel(x_c+x, y_c-y, borderColor);
+					SetPixel(x_c-x, y_c-y, borderColor);
+					SetPixel(x_c+y, y_c-x, borderColor);
+					SetPixel(x_c-y, y_c+x, borderColor);
+					SetPixel(x_c-y, y_c-x, borderColor);
+			}
+		}
+	
+	} else if (!isFilled){
+		//Border circle using Mid Point algorithm
+		while (x<y){
+			if (p < 0){
+				x = x+1;
+				y = y;
+				p = p + 2*x + 1;
+					SetPixel(x_c+x, y_c+y, borderColor);
+					SetPixel(x_c+y, y_c+x, borderColor);
+					SetPixel(x_c-x, y_c+y, borderColor);
+					SetPixel(x_c+x, y_c-y, borderColor);
+					SetPixel(x_c-x, y_c-y, borderColor);
+					SetPixel(x_c+y, y_c-x, borderColor);
+					SetPixel(x_c-y, y_c+x, borderColor);
+					SetPixel(x_c-y, y_c-x, borderColor);
+
+			} else if (p >= 0){
+				x = x+1;
+				y = y-1;
+				p = p + 2*(x-y) + 1;
+					SetPixel(x_c+x, y_c+y, borderColor);
+					SetPixel(x_c+y, y_c+x, borderColor);
+					SetPixel(x_c-x, y_c+y, borderColor);
+					SetPixel(x_c+x, y_c-y, borderColor);
+					SetPixel(x_c-x, y_c-y, borderColor);
+					SetPixel(x_c+y, y_c-x, borderColor);
+					SetPixel(x_c-y, y_c+x, borderColor);
+					SetPixel(x_c-y, y_c-x, borderColor);
+			}
 		}
 	}
 }
+	
+
 	
 #ifndef IGNORE_LAMBDAS
 
@@ -506,4 +570,22 @@ void FloatImage::Resize(unsigned int width, unsigned int height)
 	this->width = width;
 	this->height = height;
 	pixels = new_pixels;
+}
+
+Button::Button(int x, int y, const Image& image)
+{
+    this->x = x;
+    this->y = y;
+    this->image = image; 
+}
+
+bool Button::IsMouseInside(Vector2 mousePosition) {
+    int imageWidth = image.GetWidth();
+    int imageHeight = image.GetHeight();
+
+    if (mousePosition.x > x && mousePosition.x < x + imageWidth && mousePosition.y > y && mousePosition.y < y + imageHeight) {
+        return true;
+    } else {
+        return false;
+    }
 }
