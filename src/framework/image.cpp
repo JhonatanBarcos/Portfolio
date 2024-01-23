@@ -572,6 +572,7 @@ void FloatImage::Resize(unsigned int width, unsigned int height)
 	pixels = new_pixels;
 }
 
+/*
 Button::Button(int x, int y, const Image& image)
 {
     this->x = x;
@@ -589,3 +590,4 @@ bool Button::IsMouseInside(Vector2 mousePosition) {
         return false;
     }
 }
+*/  
