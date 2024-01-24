@@ -40,8 +40,9 @@ void Application::Render(void)
 	//2. draw circle
 
 	//3. draw image
+	/*Image framebuffer;
 	Image imageToDraw;
-	framebuffer.DrawImage(imageToDraw,10, 0, false)
+	framebuffer.DrawImage(imageToDraw, 10, 0, false);
 /*
 	bool success = framebuffer.LoadPNG("images/toolbar.png", false);
 	framebuffer.DrawImage(Toolbar,0 ,0 , success);
