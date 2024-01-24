@@ -83,10 +83,11 @@ public:
 	void DrawRect(int x, int y, int w, int h, const Color& borderColor, int borderWidth, bool isFilled, const Color& fillColor);
 	void DrawLineDDA(int x0, int y0, int x1, int y1, const Color& c);
 	void DrawCircle(int x, int y, int r, const Color& borderColor, int borderWidth, bool isFilled, const Color& fillColor);
+	void DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Color& borderColor, bool isFilled, const Color& fillColor);
+
 
 	// Used to easy code
 	#ifndef IGNORE_LAMBDAS
-
 	// Applies an algorithm to every pixel in an image
 	// you can use lambda sintax:   img.forEachPixel( [](Color c) { return c*2; });
 	// or callback sintax:   img.forEachPixel( mycallback ); //the callback has to be Color mycallback(Color c) { ... }
