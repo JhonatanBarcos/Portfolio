@@ -35,12 +35,13 @@ void Application::Render(void)
 	// ...
 
 	//1. draw line
-	framebuffer.DrawLineDDA(1, 1, 300, 200, Color::GREEN);
+	//framebuffer.DrawLineDDA(1, 1, 300, 200, Color::GREEN);
 
 	//2. draw circle
 
 	//3. draw image
-
+	Image imageToDraw;
+	framebuffer.DrawImage(imageToDraw,10, 0, false)
 /*
 	bool success = framebuffer.LoadPNG("images/toolbar.png", false);
 	framebuffer.DrawImage(Toolbar,0 ,0 , success);
