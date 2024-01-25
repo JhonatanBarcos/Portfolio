@@ -35,7 +35,7 @@ void Application::Render(void)
 	// ...
 
 	//1. draw line
-	//framebuffer.DrawLineDDA(1, 1, 300, 200, Color::GREEN);
+	framebuffer.DrawLineDDA(1, 1, 300, 200, Color::GREEN);
 
 	//2. draw circle
 
