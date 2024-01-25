@@ -9,6 +9,7 @@
 #include "camera.h"
 #include "mesh.h"
 
+
 Image::Image() {
 	width = 0; height = 0;
 	pixels = NULL;
@@ -499,6 +500,7 @@ void Image::DrawCircle(int x_c, int y_c, int r, const Color& borderColor, int bo
 }
 
 void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Color& borderColor, bool isFilled, const Color& fillColor){
+	//Draw triangle using the Active Edges Table (AET) approach.
 	
 }
 
