@@ -500,9 +500,109 @@ void Image::DrawCircle(int x_c, int y_c, int r, const Color& borderColor, int bo
 	}
 }
 
-void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Color& borderColor, bool isFilled, const Color& fillColor){
-	//Draw triangle using the Active Edges Table (AET) approach.
-	
+void Image::ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell> &table)
+{
+	int dx = x1 - x0;
+	int dy = y1 - y0;
+	int d = std::max(abs(dx), abs(dy));
+
+	float xInc = dx / (float)(d);
+	float yInc = dy / (float)(d);
+
+	float x = x0;
+	float y = y0;
+
+	for (int i = 0; i <= d; i++)
+	{
+		int ix = (int)(std::floor(x));
+		int iy = (int)(std::floor(y));
+
+		// Nos aseguramos de no acceder a posiciones fuera de la tabla
+		if (iy >= 0 && iy < table.size())
+		{
+			table[iy].minX = std::min(table[iy].minX, ix);
+			table[iy].maxX = std::max(table[iy].maxX, ix);
+		}
+
+		x += xInc;
+		y += yInc;
+	}
+}
+/*
+void Image::ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table) {
+	int dx = x1 - x0;
+	int dy = y1 - y0;
+	int d = std::max(abs(dx), abs(dy));
+
+	float vx = dx / static_cast<float>(d); // Cast dx to float for accurate division
+	float vy = dy / static_cast<float>(d); // Cast dy to float for accurate division
+
+	int x = x0;
+	int y = y0;
+
+	for (int i = 0; i < d; i++) {
+		if (floor(y) < table.size()) {
+			table[static_cast<int>(floor(y))].minX = std::min(table[static_cast<int>(floor(y))].minX, x); // Cast floor(y) to int for indexing
+			table[static_cast<int>(floor(y))].maxX = std::max(table[static_cast<int>(floor(y))].maxX, x); // Cast floor(y) to int for indexing
+		}
+
+		x += vx;
+		y += vy;
+	}
+}
+
+
+
+void Image::DrawTriangle(const Vector2 &p0, const Vector2 &p1, const Vector2 &p2, const Color &borderColor, bool isFilled, const Color &fillColor)
+{
+	// FIXME: Modifiy to adapt to the AET Triangle drawing algorithm
+	std::vector<Cell> table(height);
+
+	ScanLineDDA(p0.x, p0.y, p1.x, p1.y, table);
+	ScanLineDDA(p1.x, p1.y, p2.x, p2.y, table);
+	ScanLineDDA(p2.x, p2.y, p0.x, p0.y, table);
+
+	// Llenamos el triángulo si es necesario
+	if (isFilled)
+	{
+		for (int y = 0; y < table.size(); y++)
+		{
+			if (table[y].minX <= table[y].maxX)
+			{
+				for (int x = table[y].minX; x <= table[y].maxX; x++)
+				{
+					SetPixel(x, y, fillColor);
+				}
+			}
+		}
+	}
+
+	// Dibuja el borde del triángulo
+	DrawLineDDA(p0.x, p0.y, p1.x, p1.y, borderColor);
+	DrawLineDDA(p1.x, p1.y, p2.x, p2.y, borderColor);
+	DrawLineDDA(p2.x, p2.y, p0.x, p0.y, borderColor);
+}
+*/
+
+void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Color& borderColor, bool isFilled, const Color& fillColor) {
+
+    std::vector<Cell> table(height);
+
+    ScanLineDDA(p0.x, p0.y, p1.x, p1.y, table);
+    ScanLineDDA(p1.x, p1.y, p2.x, p2.y, table);
+    ScanLineDDA(p2.x, p2.y, p0.x, p0.y, table);
+
+	if (isFilled) {
+		for (int y = 0; y < table.size(); y++) {
+				for (int x = table[y].minX; x <= table[y].maxX; x++) {
+					SetPixelSafe(x, y, fillColor);
+				}
+		}
+    }
+
+	DrawLineDDA(p0.x, p0.y, p1.x, p1.y, borderColor);
+	DrawLineDDA(p1.x, p1.y, p2.x, p2.y, borderColor);
+	DrawLineDDA(p2.x, p2.y, p0.x, p0.y, borderColor);
 }
 
 	

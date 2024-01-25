@@ -32,6 +32,11 @@ class Image
 	} TGAInfo;
 
 public:
+	struct Cell {
+    int minX = INT_MAX;
+    int maxX = INT_MIN;
+	};
+
 	unsigned int width;
 	unsigned int height;
 	unsigned int bytes_per_pixel = 3; // Bits per pixel
@@ -83,6 +88,9 @@ public:
 	void DrawRect(int x, int y, int w, int h, const Color& borderColor, int borderWidth, bool isFilled, const Color& fillColor);
 	void DrawLineDDA(int x0, int y0, int x1, int y1, const Color& c);
 	void DrawCircle(int x, int y, int r, const Color& borderColor, int borderWidth, bool isFilled, const Color& fillColor);
+	
+	void SetMinMax(int& minVal, int& maxVal, int value);
+	void ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table);
 	void DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Color& borderColor, bool isFilled, const Color& fillColor);
 
 
