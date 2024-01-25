@@ -393,7 +393,7 @@ void Image::DrawLineDDA(int x0, int y0, int x1, int y1, const Color& c){
 	float d = std::max(abs(dx), abs(dy));
 
 	if (dx==0 && dy==0){
-		SetPixel(x0,y0,c);
+		SetPixelSafe(x0,y0,c);
 	} else {
 		float vx = dx/d;
 		float vy = dy/d;
@@ -401,10 +401,11 @@ void Image::DrawLineDDA(int x0, int y0, int x1, int y1, const Color& c){
 		float x = x0;
 		float y = y0;
 
+		SetPixelSafe(floor(x),floor(y),c);
 		for (int i = 0; i < d; i++){
-			SetPixel(floor(x),floor(y),c);
 			x += vx;
 			y += vy;
+			SetPixelSafe(floor(x),floor(y),c);
 		}
 	}
 }
