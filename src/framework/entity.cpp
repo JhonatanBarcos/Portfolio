@@ -1,5 +1,4 @@
 #include "entity.h"
-#include "application.h"
 
 // Default constructor
 Entity::Entity() {
@@ -39,24 +38,20 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
          // If any of the vertices is behind the camera, do not draw the triangle
         if (negZ1 || negZ2 || negZ3) {
 
-        int x1 = static_cast<int>((clipV1.x + 1) * framebuffer->width / 2);
-        int y1 = static_cast<int>((clipV1.y + 1) * framebuffer->height / 2);
-        int x2 = static_cast<int>((clipV2.x + 1) * framebuffer->width / 2);
-        int y2 = static_cast<int>((clipV2.y + 1) * framebuffer->height / 2);
-        int x3 = static_cast<int>((clipV3.x + 1) * framebuffer->width / 2);
-        int y3 = static_cast<int>((clipV3.y + 1) * framebuffer->height / 2);
+        int x1 = static_cast<int>((clipV1.x + 1) * 0.5 * framebuffer->width);
+        int y1 = static_cast<int>((1 - clipV1.y) * 0.5 * framebuffer->height);
+        int x2 = static_cast<int>((clipV2.x + 1) * 0.5 * framebuffer->width);
+        int y2 = static_cast<int>((1 - clipV2.y) * 0.5 * framebuffer->height);
+        int x3 = static_cast<int>((clipV3.x + 1) * 0.5 * framebuffer->width);
+        int y3 = static_cast<int>((1 - clipV3.y) * 0.5 * framebuffer->height);
 
         // Draw the triangle on the framebuffer using the given color
         framebuffer->DrawLineDDA(x1, y1, x2, y2, c);
         framebuffer->DrawLineDDA(x2, y2, x3, y3, c);
         framebuffer->DrawLineDDA(x3, y3, x1, y1, c);
-        
-
         }
         // else: Discard the triangle
-
-
-       
+    }
 }
 
 

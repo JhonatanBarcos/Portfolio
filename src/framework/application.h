@@ -17,8 +17,11 @@ public:
 	SDL_Window* window = nullptr;
 	int window_width;
 	int window_height;
-
+	Camera camera;
+	Matrix44 modelM; 
+	Entity* entity_anna; 
 	float time;
+	int key = -1;
 
 	// Input
 	const Uint8* keystate;
