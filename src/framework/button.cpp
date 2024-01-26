@@ -1,4 +1,3 @@
-#include "button.h";
 #include "button.h"
 
 
@@ -12,6 +11,12 @@ Button::Button(Image img, Vector2 pos){
 
 Button::~Button() {
     
+}
+
+
+
+void Button::drawButton(Image& framebuffer){
+    framebuffer.DrawImage(image, position.x, position.y, false);
 }
 
 bool Button::IsMouseInside(const Vector2& mousePosition){

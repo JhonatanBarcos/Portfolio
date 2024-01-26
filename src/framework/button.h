@@ -12,5 +12,7 @@ public:
     Button();
     Button(Image img, Vector2 pos);
     ~Button();
+    void drawButton(Image& fremuffer);
     bool IsMouseInside(const Vector2& mousePosition);
+
 };

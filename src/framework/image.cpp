@@ -630,23 +630,3 @@ void FloatImage::Resize(unsigned int width, unsigned int height)
 	this->height = height;
 	pixels = new_pixels;
 }
-
-/*
-Button::Button(int x, int y, const Image& image)
-{
-    this->x = x;
-    this->y = y;
-    this->image = image; 
-}
-
-bool Button::IsMouseInside(Vector2 mousePosition) {
-    int imageWidth = image.GetWidth();
-    int imageHeight = image.GetHeight();
-
-    if (mousePosition.x > x && mousePosition.x < x + imageWidth && mousePosition.y > y && mousePosition.y < y + imageHeight) {
-        return true;
-    } else {
-        return false;
-    }
-}
-*/  

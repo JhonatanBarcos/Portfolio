@@ -25,13 +25,6 @@ Application::~Application()
 {
 }
 
-void Application::Init(void)
-{
-	std::cout << "Initiating app..." << std::endl;
-
-}
-
-// Render one frame
 //Declare images
 Image black;
 Image blue;
@@ -49,14 +42,23 @@ Image red;
 Image save;
 Image toolbar;
 
-Button blackButton;
+Button lineButton;
+Button rectangleButton;
+Button circleButton;
+Button saveButton;
+Button loadButton;
+Button clearButton;
+Button eraserButton;
+Button redButton;
+Button greenButton;
+Button blueButton;
 
-//key pressed
-int key = -1;
-void Application::Render(void)
+void Application::Init(void)
 {
+	std::cout << "Initiating app..." << std::endl;
+
 	// Load PNGs
-	black.LoadPNG("images/black.png", false);
+	black.LoadPNG("images/black.png", true);
 	blue.LoadPNG("images/blue.png", false);
 	circle.LoadPNG("images/circle.png", false);
 	clear.LoadPNG("images/clear.png", false);
@@ -72,13 +74,25 @@ void Application::Render(void)
 	save.LoadPNG("images/save.png", false);
 	toolbar.LoadPNG("images/toolbar.png", false);
 
-	//BUTTONS
-	blackButton = Button(black, Vector2(0, 0));
+	// Load buttons
+	lineButton = Button(line, Vector2(35, 650));
+	rectangleButton = Button(rectangle, Vector2(70, 650));
+	circleButton = Button(circle, Vector2(105, 650));
+	saveButton = Button(save, Vector2(140, 650));
+	loadButton = Button(load, Vector2(175, 650));
+	clearButton = Button(clear, Vector2(210, 650));
+	eraserButton = Button(eraser, Vector2(245, 650));
+	redButton = Button(red, Vector2(280, 650));
+	greenButton = Button(green, Vector2(315, 650));
+	blueButton = Button(blue, Vector2(350, 650));
 
+}
 
-
-
-
+// Render one frame
+//key pressed
+int key = -1;
+void Application::Render(void)
+{
 	//KEY INSTRUCTIONS
 	//1. Draw line
 	if (key == 1){
@@ -125,9 +139,17 @@ void Application::Render(void)
 		// Clean screen
 		framebuffer.Fill(Color(0, 0, 0));
 
-		// Load the image
-		//bool success = Toolbar.LoadPNG("images/fruits.png", false);
-		//framebuffer.DrawImage(Fruits, 0, 0, success);
+		// Draw buttons
+		lineButton.drawButton(framebuffer);
+		rectangleButton.drawButton(framebuffer);
+		circleButton.drawButton(framebuffer);
+		saveButton.drawButton(framebuffer);
+		loadButton.drawButton(framebuffer);
+		clearButton.drawButton(framebuffer);
+		eraserButton.drawButton(framebuffer);
+		redButton.drawButton(framebuffer);
+		greenButton.drawButton(framebuffer);
+		blueButton.drawButton(framebuffer);
 	}
 
 	
