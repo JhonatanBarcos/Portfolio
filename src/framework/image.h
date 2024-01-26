@@ -144,6 +144,7 @@ class ParticleSystem {
 
         struct Particle {
                 Vector2 position;
+				Vector2 prevPosition;
                 Vector2 velocity; // Normalized speed and direction of the particle
                 Color color;
                 float acceleration;
@@ -154,7 +155,7 @@ class ParticleSystem {
         Particle particles[MAX_PARTICLES];
 
 public:
-        void Init(Image* framebuffer);
+        void Init();
         void Render(Image* framebuffer);
         void Update(float dt);
 };

@@ -632,15 +632,17 @@ void FloatImage::Resize(unsigned int width, unsigned int height)
 }
 
 
-void ParticleSystem::Init(Image* framebuffer)
+void ParticleSystem::Init()
 {
+	
 	for (int i = 0; i < MAX_PARTICLES; ++i)
 	{
-		particles[i].position.x = rand() % framebuffer->width;
-		particles[i].position.y = rand() % framebuffer->height;
+		particles[i].position.x = rand() % 1200;
+		particles[i].position.y = rand() % 650;
+		particles[i].prevPosition = particles[i].position; 
 		
-		particles[i].velocity.x = rand() % framebuffer->width;
-		particles[i].velocity.y = rand() % framebuffer->height;
+		particles[i].velocity.x = rand() % 10;
+		particles[i].velocity.y = rand() % 10;
 		
 		particles[i].acceleration = rand() % 10;
 
@@ -649,39 +651,41 @@ void ParticleSystem::Init(Image* framebuffer)
 		int b = rand() % 255;
 
 		particles[i].color = Color(r,g,b);
-		particles[i].ttl = rand() % 10;
+		particles[i].ttl = rand() % 50;
 		particles[i].inactive = false;
 	}
+
+
+
 }
 
 void ParticleSystem::Render(Image* framebuffer)
 {
+	
 	for (int i = 0; i < MAX_PARTICLES; ++i)
 	{
+		framebuffer->SetPixelSafe(particles[i].prevPosition.x, particles[i].prevPosition.y, Color::BLACK);
 		if (!particles[i].inactive){
-			framebuffer->SetPixelSafe(particles[i].position.x * framebuffer->width, particles[i].position.y * framebuffer->height, particles[i].color);
-
-		}
+			framebuffer->SetPixelSafe(particles[i].position.x, particles[i].position.y, particles[i].color);
+		} 
 	}
+
 }
 
 
 void ParticleSystem::Update(float dt)
 {
 	// Update particles
-
-
 	for (int i = 0; i < MAX_PARTICLES; ++i)
 	{
+		particles[i].prevPosition = particles[i].position;
 		particles[i].ttl -= dt;
 
-		if (particles[i].ttl <= 0)
-		{
+		if (particles[i].ttl <= 0){
 			particles[i].inactive = true;
-		}
-		else
-		{
-			particles[i].position += particles[i].velocity * dt;
+		} else{
+			particles[i].position.x += particles[i].velocity.x * dt;
+			particles[i].position.y += particles[i].velocity.y * dt;
 			particles[i].velocity.x += particles[i].acceleration * dt;
 			particles[i].velocity.y += particles[i].acceleration * dt;
 		}

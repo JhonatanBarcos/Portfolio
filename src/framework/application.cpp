@@ -53,7 +53,7 @@ Button redButton;
 Button greenButton;
 Button blueButton;
 
-ParticleSystem system;
+ParticleSystem pSystem;
 
 void Application::Init(void)
 {
@@ -89,7 +89,8 @@ void Application::Init(void)
 	blueButton = Button(blue, Vector2(350, 650));
 
 	//Init Particle System
-	system.Init(&framebuffer);
+	
+	pSystem.Init();
 }
 
 // Render one frame
@@ -158,7 +159,8 @@ void Application::Render(void)
 
 
 	//Z. Particle System
-	system.Render(&framebuffer);
+	pSystem.Render(&framebuffer);
+	
 	
 	framebuffer.Render();
 };
@@ -166,7 +168,7 @@ void Application::Render(void)
 // Called after render
 void Application::Update(float seconds_elapsed)
 {
-	system.Update(seconds_elapsed);
+	pSystem.Update(seconds_elapsed);
 }
 
 //keyboard press event 
