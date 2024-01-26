@@ -31,9 +31,6 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
         Vector3 worldV2 = modelMatrix * mesh.GetVertices()[i + 1];
         Vector3 worldV3 = modelMatrix * mesh.GetVertices()[i + 2];
 
-       
-        
-            
         // Project vertex to clip space using ProjectVector
         Vector3 clipV1 = camera->ProjectVector(worldV1, negZ1);
         Vector3 clipV2 = camera->ProjectVector(worldV2, negZ2);
@@ -53,6 +50,7 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
         framebuffer->DrawLineDDA(x1, y1, x2, y2, c);
         framebuffer->DrawLineDDA(x2, y2, x3, y3, c);
         framebuffer->DrawLineDDA(x3, y3, x1, y1, c);
+        
 
         }
         // else: Discard the triangle
