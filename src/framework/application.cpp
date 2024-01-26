@@ -53,6 +53,8 @@ Button redButton;
 Button greenButton;
 Button blueButton;
 
+
+//Declare Particle System
 ParticleSystem pSystem;
 
 void Application::Init(void)
@@ -89,7 +91,6 @@ void Application::Init(void)
 	blueButton = Button(blue, Vector2(350, 650));
 
 	//Init Particle System
-	
 	pSystem.Init();
 }
 
@@ -104,7 +105,7 @@ void Application::Render(void)
 		// Clean screen
 		framebuffer.Fill(Color(0, 0, 0));
 
-		framebuffer.DrawLineDDA(200, 300, 700, 200, Color::GREEN);
+		framebuffer.DrawLineDDA(200, 300, 700, 200, Color::BLUE);
 	}
 	
 	//2. Draw Rectangle
@@ -112,14 +113,14 @@ void Application::Render(void)
 		// Clean screen
 		framebuffer.Fill(Color(0, 0, 0));
 
-		framebuffer.DrawRect(300, 100, 300, 200, Color::BLUE, 2, true, Color::RED);
+		framebuffer.DrawRect(300, 100, 300, 200, Color::PURPLE, 4, true, Color::WHITE);
 	}
 	//3. Draw Circle
 	if (key == 3){
 		// Clean screen
 		framebuffer.Fill(Color(0, 0, 0));
 
-		framebuffer.DrawCircle(400, 300, 200, Color::RED, 2, true, Color::BLUE);
+		framebuffer.DrawCircle(400, 300, 200, Color::BLUE, 3, true, Color::WHITE);
 	}
 	//4. Draw Triangle
 		if (key == 4){
@@ -127,16 +128,12 @@ void Application::Render(void)
 		framebuffer.Fill(Color(0, 0, 0));
 
 		// Define the triangle vertices
-		Vector2 p0(0, 200);
-		Vector2 p1(300, 400);
-		Vector2 p2(500, 100);
-
-		// Define the border and fill colors
-		Color borderColor(255, 0, 0); // Red border
-		Color fillColor(0, 255, 0); // Green fill
+		Vector2 p0(100, 200);
+		Vector2 p1(400, 500);
+		Vector2 p2(600, 100);
 
 		// Draw the triangle
-		framebuffer.DrawTriangle(p0, p1, p2, borderColor, true, fillColor);
+		framebuffer.DrawTriangle(p0, p1, p2, Color::CYAN, true, Color::BLUE);
 		}
 
 	//5. Paint
@@ -158,8 +155,14 @@ void Application::Render(void)
 	}
 
 
-	//Z. Particle System
+	//6. Animation
+	if (key == 6){
+	// Clean screen
+	framebuffer.Fill(Color(0, 0, 0));
+
+	// Render animation
 	pSystem.Render(&framebuffer);
+	}
 	
 	
 	framebuffer.Render();
