@@ -89,7 +89,6 @@ public:
 	void DrawLineDDA(int x0, int y0, int x1, int y1, const Color& c);
 	void DrawCircle(int x, int y, int r, const Color& borderColor, int borderWidth, bool isFilled, const Color& fillColor);
 	
-	void SetMinMax(int& minVal, int& maxVal, int value);
 	void ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table);
 	void DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Color& borderColor, bool isFilled, const Color& fillColor);
 

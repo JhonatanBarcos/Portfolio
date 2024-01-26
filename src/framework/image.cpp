@@ -500,89 +500,42 @@ void Image::DrawCircle(int x_c, int y_c, int r, const Color& borderColor, int bo
 	}
 }
 
-void Image::ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell> &table)
-{
-	int dx = x1 - x0;
-	int dy = y1 - y0;
-	int d = std::max(abs(dx), abs(dy));
 
-	float xInc = dx / (float)(d);
-	float yInc = dy / (float)(d);
-
-	float x = x0;
-	float y = y0;
-
-	for (int i = 0; i <= d; i++)
-	{
-		int ix = (int)(std::floor(x));
-		int iy = (int)(std::floor(y));
-
-		// Nos aseguramos de no acceder a posiciones fuera de la tabla
-		if (iy >= 0 && iy < table.size())
-		{
-			table[iy].minX = std::min(table[iy].minX, ix);
-			table[iy].maxX = std::max(table[iy].maxX, ix);
-		}
-
-		x += xInc;
-		y += yInc;
-	}
-}
-/*
 void Image::ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table) {
-	int dx = x1 - x0;
-	int dy = y1 - y0;
-	int d = std::max(abs(dx), abs(dy));
+	int minY = std::max(0, std::min(y0, y1));
+	int maxY = std::min(static_cast<int>(table.size()) - 1, std::max(y0, y1));
 
-	float vx = dx / static_cast<float>(d); // Cast dx to float for accurate division
-	float vy = dy / static_cast<float>(d); // Cast dy to float for accurate division
+	float dx = x1 - x0;
+	float dy = y1 - y0;
+	float d = std::max(std::abs(dx), std::abs(dy));
 
-	int x = x0;
-	int y = y0;
+	if (dx == 0 && dy == 0) {
+		if (y0 >= minY && y0 <= maxY) {
+			table[y0].minX = std::min(table[y0].minX, x0);
+			table[y0].maxX = std::max(table[y0].maxX, x0);
+		}
+	} else {
+		float vx = dx / d;
+		float vy = dy / d;
 
-	for (int i = 0; i < d; i++) {
-		if (floor(y) < table.size()) {
-			table[static_cast<int>(floor(y))].minX = std::min(table[static_cast<int>(floor(y))].minX, x); // Cast floor(y) to int for indexing
-			table[static_cast<int>(floor(y))].maxX = std::max(table[static_cast<int>(floor(y))].maxX, x); // Cast floor(y) to int for indexing
+		float x = x0;
+		float y = y0;
+
+		if (std::floor(y) >= minY && std::floor(y) <= maxY) {
+			table[std::floor(y)].minX = std::min(table[std::floor(y)].minX, static_cast<int>(std::floor(x)));
+			table[std::floor(y)].maxX = std::max(table[std::floor(y)].maxX, static_cast<int>(std::floor(x)));
 		}
 
-		x += vx;
-		y += vy;
-	}
-}
-
-
-
-void Image::DrawTriangle(const Vector2 &p0, const Vector2 &p1, const Vector2 &p2, const Color &borderColor, bool isFilled, const Color &fillColor)
-{
-	// FIXME: Modifiy to adapt to the AET Triangle drawing algorithm
-	std::vector<Cell> table(height);
-
-	ScanLineDDA(p0.x, p0.y, p1.x, p1.y, table);
-	ScanLineDDA(p1.x, p1.y, p2.x, p2.y, table);
-	ScanLineDDA(p2.x, p2.y, p0.x, p0.y, table);
-
-	// Llenamos el triángulo si es necesario
-	if (isFilled)
-	{
-		for (int y = 0; y < table.size(); y++)
-		{
-			if (table[y].minX <= table[y].maxX)
-			{
-				for (int x = table[y].minX; x <= table[y].maxX; x++)
-				{
-					SetPixel(x, y, fillColor);
-				}
+		for (int i = 0; i < d; i++) {
+			x += vx;
+			y += vy;
+			if (std::floor(y) >= minY && std::floor(y) <= maxY) {
+				table[std::floor(y)].minX = std::min(table[std::floor(y)].minX, static_cast<int>(std::floor(x)));
+				table[std::floor(y)].maxX = std::max(table[std::floor(y)].maxX, static_cast<int>(std::floor(x)));
 			}
 		}
 	}
-
-	// Dibuja el borde del triángulo
-	DrawLineDDA(p0.x, p0.y, p1.x, p1.y, borderColor);
-	DrawLineDDA(p1.x, p1.y, p2.x, p2.y, borderColor);
-	DrawLineDDA(p2.x, p2.y, p0.x, p0.y, borderColor);
 }
-*/
 
 void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Color& borderColor, bool isFilled, const Color& fillColor) {
 
