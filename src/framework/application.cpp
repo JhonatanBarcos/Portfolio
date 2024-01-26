@@ -26,48 +26,43 @@ Application::~Application()
 void Application::Init(void)
 {
 	std::cout << "Initiating app..." << std::endl;
+
 }
 
 // Render one frame
-Image Toolbar;
-int tecla = -1;
+Image Fruits;
+int key = -1;
 void Application::Render(void)
 {
-/*
+
 	//1. Draw line
-	if (tecla == 1){
+	if (key == 1){
+		// Clean screen
 		framebuffer.Fill(Color(0, 0, 0));
+
 		framebuffer.DrawLineDDA(1, 1, 300, 200, Color::GREEN);
 	}
 	
-
-	//2. draw Rectangle
-	if (tecla == 2){
+	//2. Draw Rectangle
+	if (key == 2){
+		// Clean screen
 		framebuffer.Fill(Color(0, 0, 0));
-		//framebuffer.DrawRect(1, 1, 300, 200, Color::BLUE, false);
+
+		framebuffer.DrawRect(300, 100, 300, 200, Color::BLUE, 2, true, Color::RED);
 	}
-	//3. draw Circle
-	if (tecla == 3){
+	//3. Draw Circle
+	if (key == 3){
+		// Clean screen
 		framebuffer.Fill(Color(0, 0, 0));
-		//framebuffer.DrawCircle(1, 1, 300, Color::RED);
+
+		framebuffer.DrawCircle(400, 300, 200, Color::RED, 2, true, Color::BLUE);
 	}
-	//4. draw Triangle
+	//4. Draw Triangle
+		if (key == 4){
+		// Clean screen
+		framebuffer.Fill(Color(0, 0, 0));
 
-	//x. draw image
-	//if (tecla == 5){
-	//	bool success = Toolbar.LoadPNG("images/toolbar.png", false);
-	//	framebuffer.DrawImage(Toolbar, 0, 0, success);
-	//}
-*/
-/*
-	bool success = framebuffer.LoadPNG("images/toolbar.png", false);
-	framebuffer.DrawImage(Toolbar,0 ,0 , success);
-*/
-	//draw triangle
-	// Create an instance of the Image class
-
-	// Define the vertices of the triangle
-	if (tecla == 4){
+		// Define the triangle vertices
 		Vector2 p0(0, 200);
 		Vector2 p1(300, 400);
 		Vector2 p2(500, 100);
@@ -78,9 +73,21 @@ void Application::Render(void)
 
 		// Draw the triangle
 		framebuffer.DrawTriangle(p0, p1, p2, borderColor, true, fillColor);
+		}
+
+	//x. draw image
+	if (key == 5){
+		// Clean screen
+		framebuffer.Fill(Color(0, 0, 0));
+
+		// Load the image
+		//bool success = Toolbar.LoadPNG("images/fruits.png", false);
+		//framebuffer.DrawImage(Fruits, 0, 0, success);
 	}
+
+	
 	framebuffer.Render();
-}
+};
 
 // Called after render
 void Application::Update(float seconds_elapsed)
@@ -95,12 +102,12 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
 	// KEY CODES: https://wiki.libsdl.org/SDL2/SDL_Keycode
 	switch(event.keysym.sym) {
 		case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
-		case SDLK_1: tecla = 1; break;
-		case SDLK_2: tecla = 2; break;
-		case SDLK_3: tecla = 3; break;
-		case SDLK_4: tecla = 4; break;
-		case SDLK_5: tecla = 5; break;
-		case SDLK_6: tecla = 6; break;
+		case SDLK_1: key = 1; break;
+		case SDLK_2: key = 2; break;
+		case SDLK_3: key = 3; break;
+		case SDLK_4: key = 4; break;
+		case SDLK_5: key = 5; break;
+		case SDLK_6: key = 6; break;
 	}
 }
 
