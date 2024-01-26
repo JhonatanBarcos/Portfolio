@@ -630,3 +630,60 @@ void FloatImage::Resize(unsigned int width, unsigned int height)
 	this->height = height;
 	pixels = new_pixels;
 }
+
+
+void ParticleSystem::Init(Image* framebuffer)
+{
+	for (int i = 0; i < MAX_PARTICLES; ++i)
+	{
+		particles[i].position.x = rand() % framebuffer->width;
+		particles[i].position.y = rand() % framebuffer->height;
+		
+		particles[i].velocity.x = rand() % framebuffer->width;
+		particles[i].velocity.y = rand() % framebuffer->height;
+		
+		particles[i].acceleration = rand() % 10;
+
+		int r = rand() % 255;
+		int g = rand() % 255;
+		int b = rand() % 255;
+
+		particles[i].color = Color(r,g,b);
+		particles[i].ttl = rand() % 10;
+		particles[i].inactive = false;
+	}
+}
+
+void ParticleSystem::Render(Image* framebuffer)
+{
+	for (int i = 0; i < MAX_PARTICLES; ++i)
+	{
+		if (!particles[i].inactive){
+			framebuffer->SetPixelSafe(particles[i].position.x * framebuffer->width, particles[i].position.y * framebuffer->height, particles[i].color);
+
+		}
+	}
+}
+
+
+void ParticleSystem::Update(float dt)
+{
+	// Update particles
+
+
+	for (int i = 0; i < MAX_PARTICLES; ++i)
+	{
+		particles[i].ttl -= dt;
+
+		if (particles[i].ttl <= 0)
+		{
+			particles[i].inactive = true;
+		}
+		else
+		{
+			particles[i].position += particles[i].velocity * dt;
+			particles[i].velocity.x += particles[i].acceleration * dt;
+			particles[i].velocity.y += particles[i].acceleration * dt;
+		}
+	}
+}

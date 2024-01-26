@@ -53,6 +53,8 @@ Button redButton;
 Button greenButton;
 Button blueButton;
 
+ParticleSystem system;
+
 void Application::Init(void)
 {
 	std::cout << "Initiating app..." << std::endl;
@@ -86,6 +88,8 @@ void Application::Init(void)
 	greenButton = Button(green, Vector2(315, 650));
 	blueButton = Button(blue, Vector2(350, 650));
 
+	//Init Particle System
+	system.Init(&framebuffer);
 }
 
 // Render one frame
@@ -152,6 +156,9 @@ void Application::Render(void)
 		blueButton.drawButton(framebuffer);
 	}
 
+
+	//Z. Particle System
+	system.Render(&framebuffer);
 	
 	framebuffer.Render();
 };
@@ -159,8 +166,7 @@ void Application::Render(void)
 // Called after render
 void Application::Update(float seconds_elapsed)
 {
-
-
+	system.Update(seconds_elapsed);
 }
 
 //keyboard press event 
