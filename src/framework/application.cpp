@@ -99,7 +99,7 @@ void Application::Render(void)
 		// Clean screen
 		framebuffer.Fill(Color(0, 0, 0));
 
-		framebuffer.DrawLineDDA(1, 1, 300, 200, Color::GREEN);
+		framebuffer.DrawLineDDA(200, 300, 700, 200, Color::GREEN);
 	}
 	
 	//2. Draw Rectangle
