@@ -1,7 +1,9 @@
 #include "application.h"
 #include "mesh.h"
 #include "shader.h"
-#include "utils.h" 
+#include "utils.h"
+#include "button.h"
+
 
 Application::Application(const char* caption, int width, int height)
 {
@@ -30,11 +32,54 @@ void Application::Init(void)
 }
 
 // Render one frame
-Image Fruits;
+//Declare images
+Image black;
+Image blue;
+Image circle;
+Image clear;
+Image cyan;
+Image eraser;
+Image fruits;
+Image green;
+Image line;
+Image load;
+Image pink;
+Image rectangle;
+Image red;
+Image save;
+Image toolbar;
+
+Button blackButton;
+
+//key pressed
 int key = -1;
 void Application::Render(void)
 {
+	// Load PNGs
+	black.LoadPNG("images/black.png", false);
+	blue.LoadPNG("images/blue.png", false);
+	circle.LoadPNG("images/circle.png", false);
+	clear.LoadPNG("images/clear.png", false);
+	cyan.LoadPNG("images/cyan.png", false);
+	eraser.LoadPNG("images/eraser.png", false);
+	fruits.LoadPNG("images/fruits.png", false);
+	green.LoadPNG("images/green.png", false);
+	line.LoadPNG("images/line.png", false);
+	load.LoadPNG("images/load.png", false);
+	pink.LoadPNG("images/pink.png", false);
+	rectangle.LoadPNG("images/rectangle.png", false);
+	red.LoadPNG("images/red.png", false);
+	save.LoadPNG("images/save.png", false);
+	toolbar.LoadPNG("images/toolbar.png", false);
 
+	//BUTTONS
+	blackButton = Button(black, Vector2(0, 0));
+
+
+
+
+
+	//KEY INSTRUCTIONS
 	//1. Draw line
 	if (key == 1){
 		// Clean screen
@@ -75,7 +120,7 @@ void Application::Render(void)
 		framebuffer.DrawTriangle(p0, p1, p2, borderColor, true, fillColor);
 		}
 
-	//x. draw image
+	//5. Paint
 	if (key == 5){
 		// Clean screen
 		framebuffer.Fill(Color(0, 0, 0));

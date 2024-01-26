@@ -137,15 +137,3 @@ public:
 
 	void Resize(unsigned int width, unsigned int height);
 };
-
-class Button
-{
-	private:
-		int x;
-		int y;
-		const Image& image;
-
-	public:
-		Button(int x, int y, const Image& image);
-		bool IsMouseInside(Vector2 mousePosition);
-};

@@ -1,14 +1,17 @@
 #include "button.h";
 #include "button.h"
 
-Button::Button(const Image& img, const Vector2& pos) {
+
+Button::Button() {
+    
+}
+Button::Button(Image img, Vector2 pos){
     image = img;
     position = pos;
-
-    }
+}
 
 Button::~Button() {
-    // Destructor implementation
+    
 }
 
 bool Button::IsMouseInside(const Vector2& mousePosition){
