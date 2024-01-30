@@ -52,6 +52,11 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
         }
         // else: Discard the triangle
     }
+
+}
+
+void Entity::SetMatrix(float x, float y, float z) {
+    this->modelMatrix.SetTranslation(x, y, z);
 }
 
 

@@ -15,5 +15,5 @@ public:
 
     //Methods
     void Entity::Render(Image* framebuffer, Camera* camera, const Color& c);
-    
+    void Entity::SetMatrix(float x, float y, float z);
 };

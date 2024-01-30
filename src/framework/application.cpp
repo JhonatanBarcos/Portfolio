@@ -6,6 +6,7 @@
 #include "entity.h"
 
 
+
 Application::Application(const char* caption, int width, int height)
 {
 	this->window = createWindow(caption, width, height);
@@ -32,11 +33,12 @@ void Application::Init(void)
 
 
 	//Init camera
-	camera.SetPerspective(60.f, window_width / window_height, 0.1f, 10000.f);
+	camera.LookAt(Vector3(0,0, -4), Vector3(0, 0.25, 0), Vector3(0, 30, 0));
+	camera.SetPerspective(45,framebuffer.width/framebuffer.height, 0.01,100);
 
 	//Init entity
 	entity_anna = new Entity("meshes/anna.obj", modelM);
-
+	entity_anna->SetMatrix(0.0, -0.1, 0.0);
 }
 
 // Render one frame
