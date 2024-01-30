@@ -33,6 +33,7 @@ void Application::Init(void)
 
 
 	//Init camera
+	camera = Camera();
 	camera.LookAt(Vector3(0,0, -4), Vector3(0, 0.25, 0), Vector3(0, 30, 0));
 	camera.SetPerspective(45,framebuffer.width/framebuffer.height, 0.01,100);
 
