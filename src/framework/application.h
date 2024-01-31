@@ -20,7 +20,11 @@ public:
 	int window_height;
 	Camera camera;
 	Matrix44 modelM; 
+	Matrix44 modelM1;
+	Matrix44 modelM2;
 	Entity* entity_anna; 
+	Entity* entity_cleo;
+	Entity* entity_lee;
 	float time;
 	int key = -1;
 

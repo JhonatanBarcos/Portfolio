@@ -33,13 +33,22 @@ void Application::Init(void)
 
 
 	//Init camera
+	Vector3 eye = Vector3(0.0f, 0.0f, 5.0f);
+	Vector3 center = Vector3(0.0f, 0.0f, 0.0f);
+	Vector3 up = Vector3(0.0f, 1.0f, 0.0f);
 
-	camera.LookAt(Vector3(0,0, -4), Vector3(0, 0.25, 0), Vector3(0, 30, 0));
+	camera.LookAt(eye, center, up);
 	camera.SetPerspective(45, static_cast<float>(framebuffer.width) / framebuffer.height, 0.01f, 100);
 
-	//Init entity
+	//Init entities
 	entity_anna = new Entity("meshes/anna.obj", modelM);
 	entity_anna->SetMatrix(0.0f, -0.1f, 0.0f);
+
+	entity_cleo = new Entity("meshes/cleo.obj", modelM1);
+	entity_cleo->SetMatrix(0.2f, 0.0f, 0.0f);
+
+	entity_lee = new Entity("meshes/lee.obj", modelM2);
+	entity_lee->SetMatrix(-0.2f, 0.0f, 0.0f);
 }
 
 // Render one frame
@@ -49,6 +58,8 @@ void Application::Render(void)
 
 
 	entity_anna->Render(&framebuffer, &camera, Color::WHITE);
+	entity_cleo->Render(&framebuffer, &camera, Color::WHITE);
+	entity_lee->Render(&framebuffer, &camera, Color::WHITE);
 	//KEY INSTRUCTIONS
 	//1. Draw sigle entity
 	/*

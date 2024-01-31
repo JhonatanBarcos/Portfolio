@@ -52,6 +52,34 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
 
 }
 
+void Entity::Update(float dt) {
+    // Update the entity
+
+}
+/*
+void Entity::Update(float seconds_elapsed, int axis, bool translation) {
+   if (axis == 0) { // girar� al voltant de l'eix vertical
+        modelMatrix.Rotate(PI/100, Vector3(0, 1, 0));
+        if (translation == true) {
+            modelMatrix.Translate(0.01, 0, 0);
+        }
+    }
+   else if (axis == 1) {
+       modelMatrix.Rotate(PI / 100, Vector3(0, 0, 1));
+       if (translation == true) {
+           modelMatrix.Translate(0, 0, 0.01);
+       }
+   }
+    else if (axis == 2) {
+        modelMatrix.Rotate(PI / 50, Vector3(1, 1, 0));
+        if (translation == true) {
+            modelMatrix.Translate(0.01, 0, 0);
+        }
+
+    }
+}
+*/
+
 void Entity::SetMatrix(float x, float y, float z) {
     this->modelMatrix.SetTranslation(x, y, z);
 }
