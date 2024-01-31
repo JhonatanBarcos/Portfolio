@@ -17,4 +17,11 @@ public:
     //Methods
     void Render(Image* framebuffer, Camera* camera, const Color& c);
     void SetMatrix(float x, float y, float z);
+
+    //Others
+    bool negZ1 = true;
+    bool negZ2 = true;
+    bool negZ3 = true;
+
 };
+
