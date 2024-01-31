@@ -15,13 +15,12 @@ Entity::Entity(const char* filename, Matrix44 modelMatrix) {
     this->modelMatrix = Matrix44();
     this->mesh.LoadOBJ(filename);
 }
-
+bool negZ1 = true;
+bool negZ2 = true;
+bool negZ3 = true;
 // Methods
 void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
     int i;
-    bool negZ1 = true;
-    bool negZ2 = true;
-    bool negZ3 = true;
 
     // Iterate through each vertex
     for (i = 0; i < mesh.GetVertices().size(); i += 3) {
