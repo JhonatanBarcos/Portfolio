@@ -12,7 +12,7 @@ Entity::Entity(Matrix44& modelMatrix, const Mesh& mesh) {
 }
 
 Entity::Entity(const char* filename, Matrix44 modelMatrix) {
-    this->modelMatrix = modelMatrix;
+    this->modelMatrix = Matrix44();
     this->mesh.LoadOBJ(filename);
 }
 

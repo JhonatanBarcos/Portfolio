@@ -1,6 +1,7 @@
 
 #include "application.h"
 #include "mesh.h"
+#include "camera.h"
 
 class Entity {
 private:
@@ -14,6 +15,6 @@ public:
     Entity(const char* filename, Matrix44 modelMatrix);
 
     //Methods
-    void Entity::Render(Image* framebuffer, Camera* camera, const Color& c);
-    void Entity::SetMatrix(float x, float y, float z);
+    void Render(Image* framebuffer, Camera* camera, const Color& c);
+    void SetMatrix(float x, float y, float z);
 };

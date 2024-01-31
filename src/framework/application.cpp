@@ -33,21 +33,25 @@ void Application::Init(void)
 
 
 	//Init camera
-	camera = Camera();
+
 	camera.LookAt(Vector3(0,0, -4), Vector3(0, 0.25, 0), Vector3(0, 30, 0));
-	camera.SetPerspective(45,framebuffer.width/framebuffer.height, 0.01,100);
+	camera.SetPerspective(45, static_cast<float>(framebuffer.width) / framebuffer.height, 0.01f, 100);
 
 	//Init entity
 	entity_anna = new Entity("meshes/anna.obj", modelM);
-	entity_anna->SetMatrix(0.0, -0.1, 0.0);
+	entity_anna->SetMatrix(0.0f, -0.1f, 0.0f);
 }
 
 // Render one frame
 //key pressed
 void Application::Render(void)
 {
+
+
+	entity_anna->Render(&framebuffer, &camera, Color::WHITE);
 	//KEY INSTRUCTIONS
 	//1. Draw sigle entity
+	/*
 	if (key == 1){
 		// Clean screen
 		framebuffer.Fill(Color(0, 0, 0));
@@ -83,7 +87,7 @@ void Application::Render(void)
 		framebuffer.Fill(Color(0, 0, 0));
 	}
 	
-	
+	*/
 	framebuffer.Render();
 };
 
