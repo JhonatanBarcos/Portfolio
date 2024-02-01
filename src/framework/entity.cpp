@@ -53,7 +53,12 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
 }
 
 void Entity::Update(float dt) {
-    // Update the entity
+    // Rotate the entity slowly around the Y axis
+
+    this->modelMatrix.Rotate(1*DEG2RAD, Vector3(0, 1, 0));
+    this->modelMatrix.Translate(0.01, 0.0, 0.0);
+
+
 
 }
 /*
