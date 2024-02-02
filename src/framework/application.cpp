@@ -57,8 +57,8 @@ void Application::Init(void)
 	entity_lee = new Entity("meshes/lee.obj", modelM2);
 	entity_lee->SetMatrix(-1.0f, 0.0f, 0.0f);
 
-	entity_for = new Entity("meshes/240109Forjado.obj", modelM3);
-	entity_for->SetMatrix(0.0f, 0.0f, 0.0f);
+	//Default render mode
+	entity_anna->mode = Entity::eRenderMode::TRIANGLES;
 
 }
 
@@ -66,26 +66,30 @@ void Application::Init(void)
 //key pressed
 void Application::Render(void)
 {
-	entity_for->SetMatrix(0.0f, 0.0f, 0.0f);
-	entity_for->Render(&framebuffer, &camera, Color::WHITE);
-
-	//KEY INSTRUCTIONS
-	//1. Draw sigle entity
-	if (key == 1){
-		// Clean screen
-		framebuffer.Fill(Color(0, 0, 0));
-
+	if (key == 4){
 		//Reset entity matrix
 		entity_anna->SetMatrix(0.0f, 0.0f, 0.0f);
-		//entity_for->SetMatrix(0.0f, 0.0f, 0.0f);
-
 		//Render mesh
 		entity_anna->Render(&framebuffer, &camera, Color::WHITE);
-		//entity_for->Render(&framebuffer, &camera, Color::WHITE);
+	}
+
+
+	//KEY INSTRUCTIONS
+	//1. Toggle (activate/deactivate) between PLAIN COLOR/INTERPOLATED vertex colors
+	if (key == 1) {
+		// Clean screen
+		framebuffer.Fill(Color(0, 0, 0));
+		
+		// Toggle render mode
+		if (entity_anna->mode == Entity::eRenderMode::TRIANGLES) {
+			entity_anna->mode = Entity::eRenderMode::TRIANGLES_INTERPOLATED;
+		} else if (entity_anna->mode == Entity::eRenderMode::TRIANGLES_INTERPOLATED){
+			entity_anna->mode = Entity::eRenderMode::TRIANGLES;
+		}
 
 	}
 	
-	//2. Meshes scene animation
+	//2. Toggle between OCCLUSIONS and NO OCCLUSIONS
 	if (key == 2){
 		// Clean screen
 		framebuffer.Fill(Color(0, 0, 0));
@@ -95,7 +99,7 @@ void Application::Render(void)
 		entity_cleo->Render(&framebuffer, &camera, Color::PURPLE);
 		entity_lee->Render(&framebuffer, &camera, Color::RED);
 	}
-	//3. Ortographic camera
+	//3. Toggle between USE MESH TEXTURE and USE PLAIN COLOR colors
 	if (key == 3){
 		//Config screen
 		framebuffer.Fill(Color::BLUE);
@@ -103,89 +107,6 @@ void Application::Render(void)
 		camera.SetOrthographic(-2, 2, -2, 2, 0.01f, 100);
 		isPerspective = false;
 		isOrthographic = true;
-	}
-	//4. Perspective camera
-	if (key == 4){
-		//Config screen
-		framebuffer.Fill(Color::BLUE);
-		
-		camera.SetPerspective(45, static_cast<float>(framebuffer.width) / framebuffer.height, 0.01f, 100);
-		isPerspective = true;
-		isOrthographic = false;
-	}
-
-	//5. Camera near
-
-	if (key == 5){
-		//Config screen
-		framebuffer.Fill(Color::BLUE);
-		
-		// Set current property to camera near
-		changeNear = true;
-		changeFar = false;
-		changeFOV = false;
-
-	}
-
-	//6. Camera far
-	if (key == 6){
-		//Config screen
-		framebuffer.Fill(Color::BLUE);
-
-		// Set current property to camera far
-		changeFar = true;
-		changeNear = false;
-		changeFOV = false;
-	}
-
-	//7. FOV
-	if (key == 7){
-		//Config screen
-		framebuffer.Fill(Color::BLUE);
-
-		// Set current property to camera fov
-		changeFar = false;
-		changeFOV = true;
-		changeNear = false;
-	}
-
-	//7. Propery +
-	if (key == 8){
-		//Config screen
-		framebuffer.Fill(Color::BLUE);
-
-        // Increase current property
-        if (changeNear) {
-            camera.near_plane += 0.03f;
-        } else if (changeFar) {
-			camera.far_plane += 40.0f;
-		} else if (changeFOV) {
-			camera.fov += 10.0f;
-		}
-		camera.UpdateProjectionMatrix();
-
-
-
-	}
-
-	//8. Propery -
-	if (key == 9){
-		//Config screen
-		framebuffer.Fill(Color::BLUE);
-
-		// Decrease current property
-		if (changeNear) {
-			camera.near_plane -= 0.03f;
-		} else if (changeFar) {
-			camera.far_plane -= 40.0f;
-
-		} else if (changeFOV) {
-			camera.fov -= 10.0f;
-		}
-
-		camera.UpdateProjectionMatrix();
-
-
 		
 	}
 	
@@ -196,21 +117,7 @@ void Application::Render(void)
 // Called after render
 void Application::Update(float seconds_elapsed)
 {
-	if(key ==2){
-	// Clean screen
-	framebuffer.Fill(Color(0, 0, 0));
 
-	// Update the entities
-	entity_cleo->Update(seconds_elapsed);
-	entity_anna->Update(seconds_elapsed);
-	entity_lee->Update(seconds_elapsed);
-
-	} else {
-		//Reset position of meshes animation
-		entity_anna->SetMatrix(0.0f, 0.0f, 0.0f);
-		entity_cleo->SetMatrix(1.0f, 0.0f, 0.0f);
-		entity_lee->SetMatrix(-1.0f, 0.0f, 0.0f);
-	}
 
 }
 
@@ -220,15 +127,10 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
 	// KEY CODES: https://wiki.libsdl.org/SDL2/SDL_Keycode
 	switch(event.keysym.sym) {
 		case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
-		case SDLK_1: key = 1; break;
-		case SDLK_2: key = 2; break;
-		case SDLK_o: key = 3; break;
-		case SDLK_p: key = 4; break;
-		case SDLK_n: key = 5; break;
-		case SDLK_f: key = 6; break;
-		case SDLK_v: key = 7; break;
-		case SDLK_PLUS: key = 8; break;
-		case SDLK_MINUS: key = 9; break;
+		case SDLK_c: key = 1; break;
+		case SDLK_z: key = 2; break;
+		case SDLK_t: key = 3; break;
+		case SDLK_1: key = 4; break;
 	}
 }
 
@@ -243,18 +145,21 @@ void Application::OnMouseButtonDown( SDL_MouseButtonEvent event )
 
 	if (event.button == SDL_BUTTON_RIGHT) {
 
-	rightClick = true;
-	mouse_position.x = static_cast<float>(event.x);
-	mouse_position.y = static_cast<float>(event.y);
+		rightClick = true;
+		//clean screen
+		framebuffer.Fill(Color::BLACK);
 
-    float normalizedX = (2.0f * mouse_position.x) / window_width - 1.0f;
-    float normalizedY = 1.0f - (2.0f * mouse_position.y) / window_height;
+		mouse_position.x = static_cast<float>(event.x);
+		mouse_position.y = static_cast<float>(event.y);
+
+		float normalizedX = (2.0f * mouse_position.x) / window_width - 1.0f;
+		float normalizedY = 1.0f - (2.0f * mouse_position.y) / window_height;
 
 
-	Vector3 center = Vector3(normalizedX, normalizedY, camera.GetCenter().z);
+		Vector3 center = Vector3(normalizedX, normalizedY, camera.GetCenter().z);
 
-	camera.LookAt(camera.GetEye(),center,camera.GetUp());
-	camera.UpdateViewMatrix();
+		camera.LookAt(camera.GetEye(),center,camera.GetUp());
+		camera.UpdateViewMatrix();
 	}
 	
 }
@@ -262,11 +167,11 @@ void Application::OnMouseButtonDown( SDL_MouseButtonEvent event )
 void Application::OnMouseButtonUp( SDL_MouseButtonEvent event )
 {
 	if (event.button == SDL_BUTTON_LEFT) {
-	leftClick = false;
+		leftClick = false;
 	}
 
 	if (event.button == SDL_BUTTON_RIGHT) {
-	rightClick = false;
+		rightClick = false;
 	
 	}
 
@@ -284,10 +189,16 @@ void Application::OnWheel(SDL_MouseWheelEvent event)
 
 	if(dy > 0){
 		// Zoom in
+		//clean screen
+		framebuffer.Fill(Color::BLACK);
+
 		camera.eye.z = camera.eye.z + 0.3f;
 		camera.UpdateViewMatrix();
 	} else {
 		// Zoom out
+		//clean screen
+		framebuffer.Fill(Color::BLACK);
+
 		camera.eye.z = camera.eye.z - 0.3f;
 		camera.UpdateViewMatrix();
 	}

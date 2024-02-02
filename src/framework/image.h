@@ -91,8 +91,11 @@ public:
 	
 	void ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table);
 	void DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Color& borderColor, bool isFilled, const Color& fillColor);
+	void DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2);
+	Color InterpolateColor(const Color& c0, const Color& c1, const Color& c2, const Vector3& barycentric);
+	Vector3 CalculateBarycentricCoordinates(const Vector2& point, const Vector3& p0, const Vector3& p1, const Vector3& p2);
 
-
+	
 	// Used to easy code
 	#ifndef IGNORE_LAMBDAS
 	// Applies an algorithm to every pixel in an image

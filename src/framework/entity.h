@@ -24,5 +24,14 @@ public:
     bool negZ2 = true;
     bool negZ3 = true;
 
+    enum class eRenderMode {
+        POINTCLOUD, 
+        WIREFRAME,
+        TRIANGLES,
+        TRIANGLES_INTERPOLATED
+    };
+
+    eRenderMode mode;
+
 };
 

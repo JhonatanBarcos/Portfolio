@@ -42,12 +42,26 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
         int x3 = static_cast<int>((clipV3.x+1) * 0.5 * framebuffer->width);
         int y3 = static_cast<int>((clipV3.y+1) * 0.5 * framebuffer->height);
 
-        // Draw the triangle on the framebuffer using the given color
-        framebuffer->DrawLineDDA(x1, y1, x2, y2, c);
-        framebuffer->DrawLineDDA(x2, y2, x3, y3, c);
-        framebuffer->DrawLineDDA(x3, y3, x1, y1, c);
+        switch(mode){
+            case eRenderMode::POINTCLOUD:
+                framebuffer->SetPixelSafe(x1, y1, c);
+                framebuffer->SetPixelSafe(x2, y2, c);
+                framebuffer->SetPixelSafe(x3, y3, c);
+                break;
+
+            case eRenderMode::WIREFRAME:
+                framebuffer->DrawLineDDA(x1, y1, x2, y2, c);
+                framebuffer->DrawLineDDA(x2, y2, x3, y3, c);
+                framebuffer->DrawLineDDA(x3, y3, x1, y1, c);
+                break;
+            case eRenderMode::TRIANGLES:
+                framebuffer->DrawTriangle(Vector2(x1, y1), Vector2(x2, y2), Vector2(x3, y3), c, true, c);
+                break;
+            case eRenderMode::TRIANGLES_INTERPOLATED:   
+                framebuffer->DrawTriangleInterpolated(Vector3(x1,y1,1), Vector3(x2,y2,1), Vector3(x3,y3,1), Color::BLUE, Color::GREEN, Color::RED);
         }
         // else: Discard the triangle
+    }
 }
 
 void Entity::Update(float dt) {

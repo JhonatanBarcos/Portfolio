@@ -558,7 +558,52 @@ void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2
 	DrawLineDDA(p2.x, p2.y, p0.x, p0.y, borderColor);
 }
 
-	
+void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2) {
+	// Calculate the bounding box of the triangle
+	int minX = std::min(p0.x, std::min(p1.x, p2.x));
+	int minY = std::min(p0.y, std::min(p1.y, p2.y));
+	int maxX = std::max(p0.x, std::max(p1.x, p2.x));
+	int maxY = std::max(p0.y, std::max(p1.y, p2.y));
+
+	// Iterate over each pixel in the bounding box
+	for (int y = minY; y <= maxY; y++) {
+		for (int x = minX; x <= maxX; x++) {
+			// Calculate the barycentric coordinates of the current pixel
+			Vector3 barycentric = CalculateBarycentricCoordinates(Vector2(x, y), p0, p1, p2);
+
+			// Check if the pixel is inside the triangle
+			if (barycentric.x >= 0 && barycentric.y >= 0 && barycentric.z >= 0) {
+				// Interpolate the color using the barycentric coordinates
+				Color interpolatedColor = InterpolateColor(c0, c1, c2, barycentric);
+
+				// Set the pixel color
+				SetPixel(x, y, interpolatedColor);
+			}
+		}
+	}
+}
+
+Vector3 Image::CalculateBarycentricCoordinates(const Vector2& point, const Vector3& p0, const Vector3& p1, const Vector3& p2) {
+	// Calculate the area of the triangle
+	float area = ((p1.y - p2.y) * (p0.x - p2.x) + (p2.x - p1.x) * (p0.y - p2.y));
+
+	// Calculate the barycentric coordinates
+	float alpha = ((p1.y - p2.y) * (point.x - p2.x) + (p2.x - p1.x) * (point.y - p2.y)) / area;
+	float beta = ((p2.y - p0.y) * (point.x - p2.x) + (p0.x - p2.x) * (point.y - p2.y)) / area;
+	float gamma = 1 - alpha - beta;
+
+	return Vector3(alpha, beta, gamma);
+}
+
+Color Image::InterpolateColor(const Color& c0, const Color& c1, const Color& c2, const Vector3& barycentric) {
+	// Interpolate the color components using the barycentric coordinates
+	float r = c0.r * barycentric.x + c1.r * barycentric.y + c2.r * barycentric.z;
+	float g = c0.g * barycentric.x + c1.g * barycentric.y + c2.g * barycentric.z;
+	float b = c0.b * barycentric.x + c1.b * barycentric.y + c2.b * barycentric.z;
+	//float a = c0.a * barycentric.x + c1.a * barycentric.y + c2.a * barycentric.z;
+
+	return Color(r, g, b);
+}
 #ifndef IGNORE_LAMBDAS
 
 // You can apply and algorithm for two images and store the result in the first one
