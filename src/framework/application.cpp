@@ -57,8 +57,8 @@ void Application::Init(void)
 	entity_lee = new Entity("meshes/lee.obj", modelM2);
 	entity_lee->SetMatrix(-1.0f, 0.0f, 0.0f);
 
-	//entity_for = new Entity("meshes/for.obj", modelM3);
-	//entity_for->SetMatrix(0.0f, 0.0f, 0.0f);
+	entity_for = new Entity("meshes/240109Forjado.obj", modelM3);
+	entity_for->SetMatrix(0.0f, 0.0f, 0.0f);
 
 }
 
@@ -66,7 +66,8 @@ void Application::Init(void)
 //key pressed
 void Application::Render(void)
 {
-
+	entity_for->SetMatrix(0.0f, 0.0f, 0.0f);
+	entity_for->Render(&framebuffer, &camera, Color::WHITE);
 
 	//KEY INSTRUCTIONS
 	//1. Draw sigle entity

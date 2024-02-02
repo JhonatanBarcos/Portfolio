@@ -25,7 +25,7 @@ public:
 	Entity* entity_anna; 
 	Entity* entity_cleo;
 	Entity* entity_lee;
-	//Entity* entity_for;
+	Entity* entity_for;
 	bool isOrthographic;
 	bool isPerspective;
 	bool rightClick;
