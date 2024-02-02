@@ -14,7 +14,6 @@ class Application
 public:
 
 	// Window
-
 	SDL_Window* window = nullptr;
 	int window_width;
 	int window_height;
@@ -22,10 +21,21 @@ public:
 	Matrix44 modelM; 
 	Matrix44 modelM1;
 	Matrix44 modelM2;
+	Matrix44 modelM3;
 	Entity* entity_anna; 
 	Entity* entity_cleo;
 	Entity* entity_lee;
+	//Entity* entity_for;
+	bool isOrthographic;
+	bool isPerspective;
+	bool rightClick;
+	bool leftClick;
+	bool changeFOV;
+	bool changeNear;
+	bool changeFar;
 	float time;
+	float initialMouseX;
+	float initialMouseY;
 	int key = -1;
 
 	// Input

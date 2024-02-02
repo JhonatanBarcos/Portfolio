@@ -40,6 +40,13 @@ void Application::Init(void)
 	camera.LookAt(eye, center, up);
 	camera.SetPerspective(45, static_cast<float>(framebuffer.width) / framebuffer.height, 0.01f, 100);
 
+	//Init bools
+	isPerspective = true;
+	isOrthographic = false;
+	changeFar = false;
+	changeNear = false;
+	changeFOV = false;
+
 	//Init entities
 	entity_anna = new Entity("meshes/anna.obj", modelM);
 	entity_anna->SetMatrix(0.0f, 0.0f, 0.0f);
@@ -49,6 +56,10 @@ void Application::Init(void)
 
 	entity_lee = new Entity("meshes/lee.obj", modelM2);
 	entity_lee->SetMatrix(-1.0f, 0.0f, 0.0f);
+
+	//entity_for = new Entity("meshes/for.obj", modelM3);
+	//entity_for->SetMatrix(0.0f, 0.0f, 0.0f);
+
 }
 
 // Render one frame
@@ -65,9 +76,11 @@ void Application::Render(void)
 
 		//Reset entity matrix
 		entity_anna->SetMatrix(0.0f, 0.0f, 0.0f);
+		//entity_for->SetMatrix(0.0f, 0.0f, 0.0f);
 
 		//Render mesh
 		entity_anna->Render(&framebuffer, &camera, Color::WHITE);
+		//entity_for->Render(&framebuffer, &camera, Color::WHITE);
 
 	}
 	
@@ -83,47 +96,96 @@ void Application::Render(void)
 	}
 	//3. Ortographic camera
 	if (key == 3){
-		// Clean screen
-		framebuffer.Fill(Color(0, 0, 0));
+		//Config screen
+		framebuffer.Fill(Color::BLUE);
+		
 		camera.SetOrthographic(-2, 2, -2, 2, 0.01f, 100);
+		isPerspective = false;
+		isOrthographic = true;
 	}
 	//4. Perspective camera
-		if (key == 4){
-		// Clean screen
-		framebuffer.Fill(Color(0, 0, 0));
+	if (key == 4){
+		//Config screen
+		framebuffer.Fill(Color::BLUE);
+		
 		camera.SetPerspective(45, static_cast<float>(framebuffer.width) / framebuffer.height, 0.01f, 100);
-		}
+		isPerspective = true;
+		isOrthographic = false;
+	}
 
 	//5. Camera near
-	float current_property = 0.0f; // Declare and initialize the variable "current_property"
 
 	if (key == 5){
+		//Config screen
+		framebuffer.Fill(Color::BLUE);
+		
 		// Set current property to camera near
-		current_property = camera.near_plane;
+		changeNear = true;
+		changeFar = false;
+		changeFOV = false;
+
 	}
 
 	//6. Camera far
 	if (key == 6){
-		// Clean screen
-		current_property = camera.far_plane;
+		//Config screen
+		framebuffer.Fill(Color::BLUE);
+
+		// Set current property to camera far
+		changeFar = true;
+		changeNear = false;
+		changeFOV = false;
+	}
+
+	//7. FOV
+	if (key == 7){
+		//Config screen
+		framebuffer.Fill(Color::BLUE);
+
+		// Set current property to camera fov
+		changeFar = false;
+		changeFOV = true;
+		changeNear = false;
 	}
 
 	//7. Propery +
-	if (key == 7){
+	if (key == 8){
+		//Config screen
+		framebuffer.Fill(Color::BLUE);
+
         // Increase current property
-        if (current_property) {
-            current_property += 0.1f;
-        }
-		camera.UpdateViewMatrix();
+        if (changeNear) {
+            camera.near_plane += 0.03f;
+        } else if (changeFar) {
+			camera.far_plane += 40.0f;
+		} else if (changeFOV) {
+			camera.fov += 10.0f;
+		}
+		camera.UpdateProjectionMatrix();
+
+
+
 	}
 
 	//8. Propery -
-	if (key == 8){
+	if (key == 9){
+		//Config screen
+		framebuffer.Fill(Color::BLUE);
+
 		// Decrease current property
-        if (current_property) {
-            current_property -= 0.1f;
-        }
-		camera.UpdateViewMatrix();
+		if (changeNear) {
+			camera.near_plane -= 0.03f;
+		} else if (changeFar) {
+			camera.far_plane -= 40.0f;
+
+		} else if (changeFOV) {
+			camera.fov -= 10.0f;
+		}
+
+		camera.UpdateProjectionMatrix();
+
+
+		
 	}
 	
 	
@@ -148,6 +210,7 @@ void Application::Update(float seconds_elapsed)
 		entity_cleo->SetMatrix(1.0f, 0.0f, 0.0f);
 		entity_lee->SetMatrix(-1.0f, 0.0f, 0.0f);
 	}
+
 }
 
 //keyboard press event 
@@ -162,27 +225,55 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
 		case SDLK_p: key = 4; break;
 		case SDLK_n: key = 5; break;
 		case SDLK_f: key = 6; break;
-		case SDLK_PLUS: key = 7; break;
-		case SDLK_MINUS: key = 8; break;
+		case SDLK_v: key = 7; break;
+		case SDLK_PLUS: key = 8; break;
+		case SDLK_MINUS: key = 9; break;
 	}
 }
 
 void Application::OnMouseButtonDown( SDL_MouseButtonEvent event )
 {
 	if (event.button == SDL_BUTTON_LEFT) {
+		leftClick = true;
+		mouse_position.x = static_cast<float>(event.x);
+		mouse_position.y = static_cast<float>(event.y);
 
 	}
+
+	if (event.button == SDL_BUTTON_RIGHT) {
+
+	rightClick = true;
+	mouse_position.x = static_cast<float>(event.x);
+	mouse_position.y = static_cast<float>(event.y);
+
+    float normalizedX = (2.0f * mouse_position.x) / window_width - 1.0f;
+    float normalizedY = 1.0f - (2.0f * mouse_position.y) / window_height;
+
+
+	Vector3 center = Vector3(normalizedX, normalizedY, camera.GetCenter().z);
+
+	camera.LookAt(camera.GetEye(),center,camera.GetUp());
+	camera.UpdateViewMatrix();
+	}
+	
 }
 
 void Application::OnMouseButtonUp( SDL_MouseButtonEvent event )
 {
 	if (event.button == SDL_BUTTON_LEFT) {
-
+	leftClick = false;
 	}
+
+	if (event.button == SDL_BUTTON_RIGHT) {
+	rightClick = false;
+	
+	}
+
 }
 
 void Application::OnMouseMove(SDL_MouseButtonEvent event)
 {
+
 
 }
 
@@ -190,7 +281,16 @@ void Application::OnWheel(SDL_MouseWheelEvent event)
 {
 	float dy = event.preciseY;
 
-	// ...
+	if(dy > 0){
+		// Zoom in
+		camera.eye.z = camera.eye.z + 0.3f;
+		camera.UpdateViewMatrix();
+	} else {
+		// Zoom out
+		camera.eye.z = camera.eye.z - 0.3f;
+		camera.UpdateViewMatrix();
+	}
+
 }
 
 void Application::OnFileChanged(const char* filename)

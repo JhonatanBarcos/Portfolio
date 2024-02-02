@@ -67,4 +67,10 @@ public:
 	void UpdateViewProjectionMatrix();
 
 	Matrix44 GetViewProjectionMatrix();
+
+	// Get camera pos
+	Vector3 GetEye();
+	Vector3 GetCenter();
+	Vector3 GetUp();
+
 };

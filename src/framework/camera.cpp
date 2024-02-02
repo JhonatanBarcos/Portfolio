@@ -233,3 +233,16 @@ void Camera::SetExampleProjectionMatrix()
 	glMatrixMode(GL_MODELVIEW);
 }
 
+
+//Create function to return the camera position
+Vector3 Camera::GetEye(){
+	return eye;
+}
+
+Vector3 Camera::GetCenter(){
+	return center;
+}
+
+Vector3 Camera::GetUp(){
+	return up;
+}
