@@ -71,6 +71,10 @@ void Application::Render(void)
 		entity_anna->SetMatrix(0.0f, 0.0f, 0.0f);
 		//Render mesh
 		entity_anna->Render(&framebuffer, &camera, Color::WHITE);
+		//render mesh with bufferz
+
+
+
 	}
 
 

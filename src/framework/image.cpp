@@ -583,6 +583,41 @@ void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const
 	}
 }
 
+void Image::DrawTriangleInterpolated(const Vector3 &p0, const Vector3 &p1, const Vector3 &p2, const Color &c0, const Color &c1, const Color &c2, FloatImage* zbuffer) {
+	// Calculate the bounding box of the triangle
+	int minX = std::min(p0.x, std::min(p1.x, p2.x));
+	int minY = std::min(p0.y, std::min(p1.y, p2.y));
+	int maxX = std::max(p0.x, std::max(p1.x, p2.x));
+	int maxY = std::max(p0.y, std::max(p1.y, p2.y));
+
+	// Iterate over each pixel in the bounding box
+	for (int y = minY; y <= maxY; y++) {
+		for (int x = minX; x <= maxX; x++) {
+			// Calculate the barycentric coordinates of the current pixel
+			Vector3 barycentric = CalculateBarycentricCoordinates(Vector2(x, y), p0, p1, p2);
+
+			// Check if the pixel is inside the triangle
+			if (barycentric.x >= 0 && barycentric.y >= 0 && barycentric.z >= 0) {
+				// Interpolate the color using the barycentric coordinates
+				Color interpolatedColor = InterpolateColor(c0, c1, c2, barycentric);
+
+				// Calculate the Z value of the current pixel using the barycentric coordinates
+				float z = p0.z * barycentric.x + p1.z * barycentric.y + p2.z * barycentric.z;
+
+				// Check if the current pixel is in front of the previously drawn pixel at the same coordinates
+				if (z < zbuffer->GetPixel(x, y)) {
+					// Update the Z-buffer with the new Z value
+					zbuffer->SetPixel(x, y, z);
+
+					// Set the pixel color
+					SetPixel(x, y, interpolatedColor);
+				}
+			}
+		}
+	}
+}
+
+
 Vector3 Image::CalculateBarycentricCoordinates(const Vector2& point, const Vector3& p0, const Vector3& p1, const Vector3& p2) {
 	// Calculate the area of the triangle
 	float area = ((p1.y - p2.y) * (p0.x - p2.x) + (p2.x - p1.x) * (p0.y - p2.y));

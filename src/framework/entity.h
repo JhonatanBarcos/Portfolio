@@ -16,6 +16,7 @@ public:
 
     //Methods
     void Render(Image* framebuffer, Camera* camera, const Color& c);
+    void Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer);
     void Entity::Update(float dt);
     void SetMatrix(float x, float y, float z);
 

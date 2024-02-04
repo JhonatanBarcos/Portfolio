@@ -94,6 +94,7 @@ public:
 	void DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2);
 	Color InterpolateColor(const Color& c0, const Color& c1, const Color& c2, const Vector3& barycentric);
 	Vector3 CalculateBarycentricCoordinates(const Vector2& point, const Vector3& p0, const Vector3& p1, const Vector3& p2);
+	void DrawTriangleInterpolated(const Vector3 &p0, const Vector3 &p1, const Vector3 &p2, const Color &c0, const Color &c1, const Color &c2, FloatImage* zbuffer);
 
 	
 	// Used to easy code
