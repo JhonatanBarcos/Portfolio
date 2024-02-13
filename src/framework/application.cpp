@@ -77,7 +77,6 @@ void Application::Render(void)
 
 	}
 
-
 	//KEY INSTRUCTIONS
 	//1. Toggle (activate/deactivate) between PLAIN COLOR/INTERPOLATED vertex colors
 	if (key == 1) {
@@ -93,6 +92,7 @@ void Application::Render(void)
 
 	}
 	
+
 	//2. Toggle between OCCLUSIONS and NO OCCLUSIONS
 	if (key == 2){
 		// Clean screen
@@ -103,6 +103,8 @@ void Application::Render(void)
 		entity_cleo->Render(&framebuffer, &camera, Color::PURPLE);
 		entity_lee->Render(&framebuffer, &camera, Color::RED);
 	}
+
+
 	//3. Toggle between USE MESH TEXTURE and USE PLAIN COLOR colors
 	if (key == 3){
 		//Config screen
@@ -183,6 +185,10 @@ void Application::OnMouseButtonUp( SDL_MouseButtonEvent event )
 
 void Application::OnMouseMove(SDL_MouseButtonEvent event)
 {
+	if (event.button == SDL_BUTTON_LEFT) {
+		camera.Orbit(-mouse_delta.x * 0.01, Vector3::UP);
+		camera.Orbit(-mouse_delta.y * 0.01, Vector3::RIGHT);
+	}
 
 
 }
@@ -190,22 +196,7 @@ void Application::OnMouseMove(SDL_MouseButtonEvent event)
 void Application::OnWheel(SDL_MouseWheelEvent event)
 {
 	float dy = event.preciseY;
-
-	if(dy > 0){
-		// Zoom in
-		//clean screen
-		framebuffer.Fill(Color::BLACK);
-
-		camera.eye.z = camera.eye.z + 0.3f;
-		camera.UpdateViewMatrix();
-	} else {
-		// Zoom out
-		//clean screen
-		framebuffer.Fill(Color::BLACK);
-
-		camera.eye.z = camera.eye.z - 0.3f;
-		camera.UpdateViewMatrix();
-	}
+	camera.Zoom(dy < 0 ? 1.1 : 0.9);
 
 }
 

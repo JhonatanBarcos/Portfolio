@@ -502,38 +502,24 @@ void Image::DrawCircle(int x_c, int y_c, int r, const Color& borderColor, int bo
 
 
 void Image::ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table) {
-	int minY = std::max(0, std::min(y0, y1));
-	int maxY = std::min(static_cast<int>(table.size()) - 1, std::max(y0, y1));
 
 	float dx = x1 - x0;
+	#include <algorithm>
+
 	float dy = y1 - y0;
-	float d = std::max(std::abs(dx), std::abs(dy));
 
-	if (dx == 0 && dy == 0) {
-		if (y0 >= minY && y0 <= maxY) {
-			table[y0].minX = std::min(table[y0].minX, x0);
-			table[y0].maxX = std::max(table[y0].maxX, x0);
+	float d = std::max(abs(dx), abs(dy));
+	Vector2 v = Vector2(dx / d, dy / d);
+	float x = x0, y = y0;
+
+	for (float i = 0; i <= d; i++) {
+		//Update the table only if the calculated y coordinates are within the range of the image
+		if (y >= 0 && y < table.size()) {
+			table[floor(y)].minX = std::min(static_cast<int>(floor(x)), table[floor(y)].minX);
+			table[floor(y)].maxX = std::max(static_cast<int>(floor(x)), table[floor(y)].maxX);
 		}
-	} else {
-		float vx = dx / d;
-		float vy = dy / d;
-
-		float x = x0;
-		float y = y0;
-
-		if (std::floor(y) >= minY && std::floor(y) <= maxY) {
-			table[std::floor(y)].minX = std::min(table[std::floor(y)].minX, static_cast<int>(std::floor(x)));
-			table[std::floor(y)].maxX = std::max(table[std::floor(y)].maxX, static_cast<int>(std::floor(x)));
-		}
-
-		for (int i = 0; i < d; i++) {
-			x += vx;
-			y += vy;
-			if (std::floor(y) >= minY && std::floor(y) <= maxY) {
-				table[std::floor(y)].minX = std::min(table[std::floor(y)].minX, static_cast<int>(std::floor(x)));
-				table[std::floor(y)].maxX = std::max(table[std::floor(y)].maxX, static_cast<int>(std::floor(x)));
-			}
-		}
+		x += v.x;
+		y += v.y;
 	}
 }
 
@@ -546,16 +532,24 @@ void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2
     ScanLineDDA(p2.x, p2.y, p0.x, p0.y, table);
 
 	if (isFilled) {
-		for (int y = 0; y < table.size(); y++) {
-				for (int x = table[y].minX; x <= table[y].maxX; x++) {
-					SetPixelSafe(x, y, fillColor);
-				}
+		//Create table
+		std::vector<Cell> table(height);
+		//Update table with the min and max x values of the triangle
+		ScanLineDDA(p0.x, p0.y, p1.x, p1.y, table);
+		ScanLineDDA(p1.x, p1.y, p2.x, p2.y, table);
+		ScanLineDDA(p0.x, p0.y, p2.x, p2.y, table);
+		//Paint the triangle
+		for (int i = 0; i < table.size(); i++) {
+			//Paint each row of the triangle from minx to maxx (included)
+			for (int j = table[i].minX; j <= table[i].maxX; j++) {
+				SetPixelSafe(j, i, fillColor);
+			}
 		}
-    }
+	}
 
 	DrawLineDDA(p0.x, p0.y, p1.x, p1.y, borderColor);
+	DrawLineDDA(p0.x, p0.y, p2.x, p2.y, borderColor);
 	DrawLineDDA(p1.x, p1.y, p2.x, p2.y, borderColor);
-	DrawLineDDA(p2.x, p2.y, p0.x, p0.y, borderColor);
 }
 
 void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2) {
