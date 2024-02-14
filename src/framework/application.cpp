@@ -186,6 +186,10 @@ void Application::OnMouseButtonUp( SDL_MouseButtonEvent event )
 void Application::OnMouseMove(SDL_MouseButtonEvent event)
 {
 	if (event.button == SDL_BUTTON_LEFT) {
+		//clean screen
+		framebuffer.Fill(Color::BLACK);
+
+		//orbit
 		camera.Orbit(-mouse_delta.x * 0.01, Vector3::UP);
 		camera.Orbit(-mouse_delta.y * 0.01, Vector3::RIGHT);
 	}
@@ -196,6 +200,11 @@ void Application::OnMouseMove(SDL_MouseButtonEvent event)
 void Application::OnWheel(SDL_MouseWheelEvent event)
 {
 	float dy = event.preciseY;
+
+	//clean screen
+	framebuffer.Fill(Color::BLACK);
+
+	//zoom
 	camera.Zoom(dy < 0 ? 1.1 : 0.9);
 
 }
