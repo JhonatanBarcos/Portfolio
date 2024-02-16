@@ -18,7 +18,6 @@ Application::Application(const char* caption, int width, int height)
 	this->window_width = w;
 	this->window_height = h;
 	this->keystate = SDL_GetKeyboardState(nullptr);
-
 	this->framebuffer.Resize(w, h);
 }
 
@@ -29,7 +28,6 @@ Application::~Application()
 void Application::Init(void)
 {
 	std::cout << "Initiating app..." << std::endl;
-
 
 	//Init camera
 	Vector3 eye = Vector3(0.0f, 0.0f, 5.0f);
@@ -49,6 +47,13 @@ void Application::Init(void)
 	entity_lee = new Entity("meshes/lee.obj", modelM2);
 	entity_lee->SetMatrix(-1.0f, 0.0f, 0.0f);
 
+	//Init mesh
+	mesh = new Mesh();
+	mesh->LoadOBJ("meshes/lee.obj");
+	
+	//Init shader
+	shader = new Shader();
+	shader = Shader::Get("shaders/default.vs", "shaders/default.fs");
 
 	
 
@@ -58,34 +63,9 @@ void Application::Init(void)
 //key pressed
 void Application::Render(void)
 {
-	// Tecla 1 para renderizar en el modo actualizado
-	if (key == 4){
-	
-	}
-
-	//KEY INSTRUCTIONS
-	//1. Toggle (activate/deactivate) between PLAIN COLOR/INTERPOLATED vertex colors
-	if (key == 1) {
-		// Clean screen
-		framebuffer.Fill(Color(0, 0, 0));
-
-	}
-	
-
-	//
-	if (key == 2){
-		// Clean screen
-		framebuffer.Fill(Color(0, 0, 0));
-
-	}
-
-
-	//
-	if (key == 3){
-		//Config screen
-		framebuffer.Fill(Color(0, 0, 0));
-		
-	}
+	shader->Enable();
+	mesh->Render();
+	shader->Disable();
 
 	framebuffer.Render();
 };
