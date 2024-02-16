@@ -17,6 +17,7 @@ public:
 	SDL_Window* window = nullptr;
 	int window_width;
 	int window_height;
+	FloatImage* zbuffer;
 	Camera camera;
 	Matrix44 modelM; 
 	Matrix44 modelM1;
@@ -26,13 +27,8 @@ public:
 	Entity* entity_cleo;
 	Entity* entity_lee;
 	Entity* entity_for;
-	bool isOrthographic;
-	bool isPerspective;
 	bool rightClick;
 	bool leftClick;
-	bool changeFOV;
-	bool changeNear;
-	bool changeFar;
 	float time;
 	float initialMouseX;
 	float initialMouseY;

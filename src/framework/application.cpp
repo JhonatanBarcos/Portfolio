@@ -40,13 +40,6 @@ void Application::Init(void)
 	camera.LookAt(eye, center, up);
 	camera.SetPerspective(45, static_cast<float>(framebuffer.width) / framebuffer.height, 0.01f, 100);
 
-	//Init bools
-	isPerspective = true;
-	isOrthographic = false;
-	changeFar = false;
-	changeNear = false;
-	changeFOV = false;
-
 	//Init entities
 	entity_anna = new Entity("meshes/anna.obj", modelM);
 	entity_anna->SetMatrix(0.0f, 0.0f, 0.0f);
@@ -60,21 +53,23 @@ void Application::Init(void)
 	//Default render mode
 	entity_anna->mode = Entity::eRenderMode::TRIANGLES;
 
+	//Init zbuffer
+	zbuffer = new FloatImage(framebuffer.width, framebuffer.height);
+	zbuffer->Fill(100000.0f);
+	
+
 }
 
 // Render one frame
 //key pressed
 void Application::Render(void)
 {
+	// Tecla 1 para renderizar en el modo actualizado
 	if (key == 4){
 		//Reset entity matrix
 		entity_anna->SetMatrix(0.0f, 0.0f, 0.0f);
-		//Render mesh
-		entity_anna->Render(&framebuffer, &camera, Color::WHITE);
-		//render mesh with bufferz
-
-
-
+		entity_anna->Render(&framebuffer, &camera, zbuffer);	
+		//entity_anna->Render(&framebuffer, &camera, Color::WHITE);		
 	}
 
 	//KEY INSTRUCTIONS
@@ -84,12 +79,11 @@ void Application::Render(void)
 		framebuffer.Fill(Color(0, 0, 0));
 		
 		// Toggle render mode
-		if (entity_anna->mode == Entity::eRenderMode::TRIANGLES) {
-			entity_anna->mode = Entity::eRenderMode::TRIANGLES_INTERPOLATED;
-		} else if (entity_anna->mode == Entity::eRenderMode::TRIANGLES_INTERPOLATED){
+		if (entity_anna->mode != Entity::eRenderMode::TRIANGLES) {
 			entity_anna->mode = Entity::eRenderMode::TRIANGLES;
+		} else if (entity_anna->mode == Entity::eRenderMode::TRIANGLES_INTERPOLATED){
+			entity_anna->mode = Entity::eRenderMode::TRIANGLES_INTERPOLATED;
 		}
-
 	}
 	
 
@@ -98,25 +92,29 @@ void Application::Render(void)
 		// Clean screen
 		framebuffer.Fill(Color(0, 0, 0));
 
-		//Render
-		entity_anna->Render(&framebuffer, &camera, Color::YELLOW);
-		entity_cleo->Render(&framebuffer, &camera, Color::PURPLE);
-		entity_lee->Render(&framebuffer, &camera, Color::RED);
+		if (entity_anna->mode != Entity::eRenderMode::OCCLUSIONS){
+			entity_anna->mode = Entity::eRenderMode::OCCLUSIONS;
+		} else if (entity_anna->mode == Entity::eRenderMode::TRIANGLES_INTERPOLATED) {
+			entity_anna->mode = Entity::eRenderMode::TRIANGLES_INTERPOLATED;
+		}
 	}
 
 
 	//3. Toggle between USE MESH TEXTURE and USE PLAIN COLOR colors
 	if (key == 3){
 		//Config screen
-		framebuffer.Fill(Color::BLUE);
+		framebuffer.Fill(Color(0, 0, 0));
 		
-		camera.SetOrthographic(-2, 2, -2, 2, 0.01f, 100);
-		isPerspective = false;
-		isOrthographic = true;
-		
+		//Toggle texture
+		if (entity_anna->mode != Entity::eRenderMode::TEXTURE){
+			entity_anna->mode = Entity::eRenderMode::TEXTURE;
+		} else if (entity_anna->mode == Entity::eRenderMode::OCCLUSIONS){
+			entity_anna->mode = Entity::eRenderMode::OCCLUSIONS;
+		}
+
+		//No se carga correctamente la textura
 	}
-	
-	
+
 	framebuffer.Render();
 };
 

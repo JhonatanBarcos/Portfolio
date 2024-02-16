@@ -29,10 +29,12 @@ public:
         POINTCLOUD, 
         WIREFRAME,
         TRIANGLES,
-        TRIANGLES_INTERPOLATED
+        TRIANGLES_INTERPOLATED,
+        OCCLUSIONS,
+        TEXTURE,
     };
-
     eRenderMode mode;
+
 
 };
 

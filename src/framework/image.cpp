@@ -552,38 +552,9 @@ void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2
 	DrawLineDDA(p1.x, p1.y, p2.x, p2.y, borderColor);
 }
 
+
+
 void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2) {
-	// Calculamos los limites del triángulo encerrado en una caja
-	int minX = std::min(p0.x, std::min(p1.x, p2.x));
-	int minY = std::min(p0.y, std::min(p1.y, p2.y));
-	int maxX = std::max(p0.x, std::max(p1.x, p2.x));
-	int maxY = std::max(p0.y, std::max(p1.y, p2.y));
-
-	// Iteramos sobre cada uno de los píxeles
-	for (int y = minY; y <= maxY; y++) {
-		for (int x = minX; x <= maxX; x++) {
-			// Calculamos las coordenadas baricéntricas de cada pixel
-			Matrix44 m = CalculateM(Vector2(x, y), p0, p1, p2);
-			Vector3 pixelCoords = (x,y,1); 
-			Vector3 barycentricCoords = m * pixelCoords;
-
-			barycentricCoords.Clamp(0,1);
-
-			float barycentricCoordsSum = barycentricCoords.x + barycentricCoords.y + barycentricCoords.z;
-			barycentricCoords = barycentricCoords / barycentricCoordsSum;
-
-			// Hallamos el color interpolado
-			Color interpolatedColor = InterpolateColor(c0, c1, c2, barycentricCoords);
-
-			// Pintamos el pixel
-			SetPixelSafe(x, y, interpolatedColor);
-			
-		}
-	}
-}
-
-
-Matrix44 Image::CalculateM(const Vector2& point, const Vector3& p0, const Vector3& p1, const Vector3& p2) {
 	std::vector<Cell> table(height);
 	Matrix44 m;
 	
@@ -591,28 +562,185 @@ Matrix44 Image::CalculateM(const Vector2& point, const Vector3& p0, const Vector
 	ScanLineDDA(p1.x, p1.y, p2.x, p2.y, table);
 	ScanLineDDA(p0.x, p0.y, p2.x, p2.y, table);
 
-	m.M[0][0] = p0.x;
-	m.M[1][0] = p1.x;
-	m.M[2][0] = p2.x;
-	m.M[0][1] = p0.y;
-	m.M[1][1] = p1.y;
-	m.M[2][1] = p2.y;
+	// Hallamos matriz inversa de M
+	m.M[0][0] = p0.x;    
+	m.M[0][1] = p0.y;    
 	m.M[0][2] = 1;
+
+	m.M[1][0] = p1.x;    
+	m.M[1][1] = p1.y;    
 	m.M[1][2] = 1;
+
+	m.M[2][0] = p2.x;    
+	m.M[2][1] = p2.y;    
 	m.M[2][2] = 1;
+
 	m.Inverse();
 
-	return m;
+	// Iteramos sobre cada uno de los píxeles
+	for (int i = 0; i < table.size(); i++){
+		for (int j = table[i].minX; j <= table[i].maxX; j++) {
+			// Calculamos las coordenadas baricéntricas de cada pixel
+			Vector3 pixelCoords(j,i,1); 
+			Vector3 barycentricCoords = m * pixelCoords;
+
+			barycentricCoords.Clamp(0,1);
+
+			// Normalizamos las coordenadas baricéntricas
+			float barycentricCoordsSum = barycentricCoords.x + barycentricCoords.y + barycentricCoords.z;
+			barycentricCoords = barycentricCoords / barycentricCoordsSum;
+
+			// Comprobamos si el pixel está dentro del triángulo
+			if (barycentricCoords.x >= 0 && barycentricCoords.y >= 0 && barycentricCoords.z >= 0) {
+
+				// Hallamos el color interpolado
+				Color interpolatedColor = c0 * barycentricCoords.x + c1 * barycentricCoords.y + c2 * barycentricCoords.z;
+
+				// Pintamos el pixel
+				SetPixelSafe(j, i, interpolatedColor);
+			}
+			
+		}
+	}
 }
 
-Color Image::InterpolateColor(const Color& c0, const Color& c1, const Color& c2, const Vector3& barycentric) {
-	// Interpolamos los colores utilizando las coords baricentricas
-	float r = c0.r * barycentric.x + c1.r * barycentric.y + c2.r * barycentric.z;
-	float g = c0.g * barycentric.x + c1.g * barycentric.y + c2.g * barycentric.z;
-	float b = c0.b * barycentric.x + c1.b * barycentric.y + c2.b * barycentric.z;
 
-	return Color(r, g, b);
+void Image::DrawTriangleInterpolated2(const Vector3 &p0, const Vector3 &p1, const Vector3 &p2, const Color &c0, const Color &c1, const Color &c2, FloatImage* zbuffer) {
+    std::vector<Cell> table(height);
+    Matrix44 m;
+
+    ScanLineDDA(p0.x, p0.y, p1.x, p1.y, table);
+    ScanLineDDA(p1.x, p1.y, p2.x, p2.y, table);
+    ScanLineDDA(p0.x, p0.y, p2.x, p2.y, table);
+
+    // Hallamos la matriz inversa de M
+    m.M[0][0] = p0.x;
+    m.M[0][1] = p0.y;
+    m.M[0][2] = 1;
+
+    m.M[1][0] = p1.x;
+    m.M[1][1] = p1.y;
+    m.M[1][2] = 1;
+
+    m.M[2][0] = p2.x;
+    m.M[2][1] = p2.y;
+    m.M[2][2] = 1;
+
+    m.Inverse();
+
+    // Iteramos sobre cada uno de los píxeles
+    for (int i = 0; i < table.size(); i++) {
+        for (int j = table[i].minX; j <= table[i].maxX; j++) {
+            // Calculamos las coordenadas baricéntricas de cada pixel
+            Vector3 pixelCoords(j, i, 1); 
+
+            Vector3 barycentricCoords = m * pixelCoords;
+
+            // Clampeamos las coordenadas baricéntricas
+            barycentricCoords.Clamp(0, 1);
+
+            // Comprobamos si el pixel está dentro del triángulo
+            if (barycentricCoords.x >= 0 && barycentricCoords.y >= 0 && barycentricCoords.z >= 0) {
+                // Hallamos el valor interpolado de Z
+                float interpolatedZ = p0.z * barycentricCoords.x + p1.z * barycentricCoords.y + p2.z * barycentricCoords.z;
+
+                // Comprobamos si el pixel está más cerca que el valor actual en el Z-buffer
+                if (interpolatedZ < zbuffer->GetPixel(j, i)) {
+                    // Actualizamos el Z-buffer con el nuevo valor
+                    zbuffer->SetPixel(j, i, interpolatedZ);
+
+                    // Hallamos el color interpolado
+                    Color interpolatedColor = c0 * barycentricCoords.x + c1 * barycentricCoords.y + c2 * barycentricCoords.z;
+
+                    // Pintamos el pixel
+                    SetPixelSafe(j, i, interpolatedColor);
+                }
+            }
+        }
+    }
 }
+void Image::DrawTriangleInterpolated3(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zbuffer, Image* texture, const Vector2& uv0, const Vector2& uv1, const Vector2& uv2) {
+    std::vector<Cell> table(height);
+    Matrix44 m;
+
+    ScanLineDDA(p0.x, p0.y, p1.x, p1.y, table);
+    ScanLineDDA(p1.x, p1.y, p2.x, p2.y, table);
+    ScanLineDDA(p0.x, p0.y, p2.x, p2.y, table);
+
+    // Hallamos la matriz inversa de M
+    m.M[0][0] = p0.x;
+    m.M[0][1] = p0.y;
+    m.M[0][2] = 1;
+
+    m.M[1][0] = p1.x;
+    m.M[1][1] = p1.y;
+    m.M[1][2] = 1;
+
+    m.M[2][0] = p2.x;
+    m.M[2][1] = p2.y;
+    m.M[2][2] = 1;
+
+    m.Inverse();
+
+    // Iteramos sobre cada uno de los píxeles
+    for (int i = 0; i < table.size(); i++) {
+        for (int j = table[i].minX; j <= table[i].maxX; j++) {
+            // Calculamos las coordenadas baricéntricas de cada pixel
+            Vector3 pixelCoords(j, i, 1); 
+
+            Vector3 barycentricCoords = m * pixelCoords;
+
+            // Clampeamos las coordenadas baricéntricas
+            barycentricCoords.Clamp(0, 1);
+
+            // Comprobamos si el pixel está dentro del triángulo
+            if (barycentricCoords.x >= 0 && barycentricCoords.y >= 0 && barycentricCoords.z >= 0) {
+                // Hallamos el valor interpolado de Z
+                float interpolatedZ = p0.z * barycentricCoords.x + p1.z * barycentricCoords.y + p2.z * barycentricCoords.z;
+
+                // Verificamos si hay una textura disponible
+                if (texture != nullptr) {
+                    // Hallamos las coordenadas de textura interpoladas usando los pesos bariocéntricos
+                    float interpolatedU = uv0.x * barycentricCoords.x + uv1.x * barycentricCoords.y + uv2.x * barycentricCoords.z;
+                    float interpolatedV = uv0.y * barycentricCoords.x + uv1.y * barycentricCoords.y + uv2.y * barycentricCoords.z;
+
+                    // Convertimos las coordenadas de textura normalizadas a las coordenadas de la textura
+                    float textureX = interpolatedU * (texture->width - 1);
+                    float textureY = interpolatedV * (texture->height - 1);
+
+                    // Obtenemos el color del píxel en la textura
+                    Color interpolatedColor = texture->GetPixelSafe(textureX, textureY);
+
+                    // Comprobamos si el pixel está más cerca que el valor actual en el Z-buffer
+                    if (interpolatedZ < zbuffer->GetPixel(j, i)) {
+                        // Actualizamos el Z-buffer con el nuevo valor
+                        zbuffer->SetPixel(j, i, interpolatedZ);
+
+                        // Pintamos el pixel
+                        SetPixelSafe(j, i, interpolatedColor);
+                    }
+                } else {
+                    // No hay textura disponible, utilizar colores
+                    // Hallamos el color interpolado
+                    Color interpolatedColor = c0 * barycentricCoords.x + c1 * barycentricCoords.y + c2 * barycentricCoords.z;
+
+                    // Comprobamos si el pixel está más cerca que el valor actual en el Z-buffer
+                    if (interpolatedZ < zbuffer->GetPixel(j, i)) {
+                        // Actualizamos el Z-buffer con el nuevo valor
+                        zbuffer->SetPixel(j, i, interpolatedZ);
+
+                        // Pintamos el pixel
+                        SetPixelSafe(j, i, interpolatedColor);
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+
 #ifndef IGNORE_LAMBDAS
 
 // You can apply and algorithm for two images and store the result in the first one
