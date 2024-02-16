@@ -17,7 +17,6 @@ public:
 	SDL_Window* window = nullptr;
 	int window_width;
 	int window_height;
-	FloatImage* zbuffer;
 	Camera camera;
 	Matrix44 modelM; 
 	Matrix44 modelM1;

@@ -15,8 +15,7 @@ public:
     Entity(const char* filename, Matrix44 modelMatrix);
 
     //Methods
-    void Render(Image* framebuffer, Camera* camera, const Color& c);
-    void Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer);
+    void Render();
     void Entity::Update(float dt);
     void SetMatrix(float x, float y, float z);
 
@@ -24,16 +23,6 @@ public:
     bool negZ1 = true;
     bool negZ2 = true;
     bool negZ3 = true;
-
-    enum class eRenderMode {
-        POINTCLOUD, 
-        WIREFRAME,
-        TRIANGLES,
-        TRIANGLES_INTERPOLATED,
-        OCCLUSIONS,
-        TEXTURE,
-    };
-    eRenderMode mode;
 
 
 };

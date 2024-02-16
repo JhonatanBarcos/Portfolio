@@ -2,7 +2,6 @@
 #include "mesh.h"
 #include "shader.h"
 #include "utils.h"
-#include "button.h"
 #include "entity.h"
 
 
@@ -50,12 +49,7 @@ void Application::Init(void)
 	entity_lee = new Entity("meshes/lee.obj", modelM2);
 	entity_lee->SetMatrix(-1.0f, 0.0f, 0.0f);
 
-	//Default render mode
-	entity_anna->mode = Entity::eRenderMode::TRIANGLES;
 
-	//Init zbuffer
-	zbuffer = new FloatImage(framebuffer.width, framebuffer.height);
-	zbuffer->Fill(100000.0f);
 	
 
 }
@@ -66,10 +60,7 @@ void Application::Render(void)
 {
 	// Tecla 1 para renderizar en el modo actualizado
 	if (key == 4){
-		//Reset entity matrix
-		entity_anna->SetMatrix(0.0f, 0.0f, 0.0f);
-		entity_anna->Render(&framebuffer, &camera, zbuffer);	
-		//entity_anna->Render(&framebuffer, &camera, Color::WHITE);		
+	
 	}
 
 	//KEY INSTRUCTIONS
@@ -77,42 +68,23 @@ void Application::Render(void)
 	if (key == 1) {
 		// Clean screen
 		framebuffer.Fill(Color(0, 0, 0));
-		
-		// Toggle render mode
-		if (entity_anna->mode != Entity::eRenderMode::TRIANGLES) {
-			entity_anna->mode = Entity::eRenderMode::TRIANGLES;
-		} else if (entity_anna->mode == Entity::eRenderMode::TRIANGLES_INTERPOLATED){
-			entity_anna->mode = Entity::eRenderMode::TRIANGLES_INTERPOLATED;
-		}
+
 	}
 	
 
-	//2. Toggle between OCCLUSIONS and NO OCCLUSIONS
+	//
 	if (key == 2){
 		// Clean screen
 		framebuffer.Fill(Color(0, 0, 0));
 
-		if (entity_anna->mode != Entity::eRenderMode::OCCLUSIONS){
-			entity_anna->mode = Entity::eRenderMode::OCCLUSIONS;
-		} else if (entity_anna->mode == Entity::eRenderMode::TRIANGLES_INTERPOLATED) {
-			entity_anna->mode = Entity::eRenderMode::TRIANGLES_INTERPOLATED;
-		}
 	}
 
 
-	//3. Toggle between USE MESH TEXTURE and USE PLAIN COLOR colors
+	//
 	if (key == 3){
 		//Config screen
 		framebuffer.Fill(Color(0, 0, 0));
 		
-		//Toggle texture
-		if (entity_anna->mode != Entity::eRenderMode::TEXTURE){
-			entity_anna->mode = Entity::eRenderMode::TEXTURE;
-		} else if (entity_anna->mode == Entity::eRenderMode::OCCLUSIONS){
-			entity_anna->mode = Entity::eRenderMode::OCCLUSIONS;
-		}
-
-		//No se carga correctamente la textura
 	}
 
 	framebuffer.Render();
