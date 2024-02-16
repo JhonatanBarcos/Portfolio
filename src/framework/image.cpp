@@ -553,83 +553,63 @@ void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2
 }
 
 void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2) {
-	// Calculate the bounding box of the triangle
+	// Calculamos los limites del triángulo encerrado en una caja
 	int minX = std::min(p0.x, std::min(p1.x, p2.x));
 	int minY = std::min(p0.y, std::min(p1.y, p2.y));
 	int maxX = std::max(p0.x, std::max(p1.x, p2.x));
 	int maxY = std::max(p0.y, std::max(p1.y, p2.y));
 
-	// Iterate over each pixel in the bounding box
+	// Iteramos sobre cada uno de los píxeles
 	for (int y = minY; y <= maxY; y++) {
 		for (int x = minX; x <= maxX; x++) {
-			// Calculate the barycentric coordinates of the current pixel
-			Vector3 barycentric = CalculateBarycentricCoordinates(Vector2(x, y), p0, p1, p2);
+			// Calculamos las coordenadas baricéntricas de cada pixel
+			Matrix44 m = CalculateM(Vector2(x, y), p0, p1, p2);
+			Vector3 pixelCoords = (x,y,1); 
+			Vector3 barycentricCoords = m * pixelCoords;
 
-			// Check if the pixel is inside the triangle
-			if (barycentric.x >= 0 && barycentric.y >= 0 && barycentric.z >= 0) {
-				// Interpolate the color using the barycentric coordinates
-				Color interpolatedColor = InterpolateColor(c0, c1, c2, barycentric);
+			barycentricCoords.Clamp(0,1);
 
-				// Set the pixel color
-				SetPixel(x, y, interpolatedColor);
-			}
-		}
-	}
-}
+			float barycentricCoordsSum = barycentricCoords.x + barycentricCoords.y + barycentricCoords.z;
+			barycentricCoords = barycentricCoords / barycentricCoordsSum;
 
-void Image::DrawTriangleInterpolated(const Vector3 &p0, const Vector3 &p1, const Vector3 &p2, const Color &c0, const Color &c1, const Color &c2, FloatImage* zbuffer) {
-	// Calculate the bounding box of the triangle
-	int minX = std::min(p0.x, std::min(p1.x, p2.x));
-	int minY = std::min(p0.y, std::min(p1.y, p2.y));
-	int maxX = std::max(p0.x, std::max(p1.x, p2.x));
-	int maxY = std::max(p0.y, std::max(p1.y, p2.y));
+			// Hallamos el color interpolado
+			Color interpolatedColor = InterpolateColor(c0, c1, c2, barycentricCoords);
 
-	// Iterate over each pixel in the bounding box
-	for (int y = minY; y <= maxY; y++) {
-		for (int x = minX; x <= maxX; x++) {
-			// Calculate the barycentric coordinates of the current pixel
-			Vector3 barycentric = CalculateBarycentricCoordinates(Vector2(x, y), p0, p1, p2);
-
-			// Check if the pixel is inside the triangle
-			if (barycentric.x >= 0 && barycentric.y >= 0 && barycentric.z >= 0) {
-				// Interpolate the color using the barycentric coordinates
-				Color interpolatedColor = InterpolateColor(c0, c1, c2, barycentric);
-
-				// Calculate the Z value of the current pixel using the barycentric coordinates
-				float z = p0.z * barycentric.x + p1.z * barycentric.y + p2.z * barycentric.z;
-
-				// Check if the current pixel is in front of the previously drawn pixel at the same coordinates
-				if (z < zbuffer->GetPixel(x, y)) {
-					// Update the Z-buffer with the new Z value
-					zbuffer->SetPixel(x, y, z);
-
-					// Set the pixel color
-					SetPixel(x, y, interpolatedColor);
-				}
-			}
+			// Pintamos el pixel
+			SetPixelSafe(x, y, interpolatedColor);
+			
 		}
 	}
 }
 
 
-Vector3 Image::CalculateBarycentricCoordinates(const Vector2& point, const Vector3& p0, const Vector3& p1, const Vector3& p2) {
-	// Calculate the area of the triangle
-	float area = ((p1.y - p2.y) * (p0.x - p2.x) + (p2.x - p1.x) * (p0.y - p2.y));
+Matrix44 Image::CalculateM(const Vector2& point, const Vector3& p0, const Vector3& p1, const Vector3& p2) {
+	std::vector<Cell> table(height);
+	Matrix44 m;
+	
+	ScanLineDDA(p0.x, p0.y, p1.x, p1.y, table);
+	ScanLineDDA(p1.x, p1.y, p2.x, p2.y, table);
+	ScanLineDDA(p0.x, p0.y, p2.x, p2.y, table);
 
-	// Calculate the barycentric coordinates
-	float alpha = ((p1.y - p2.y) * (point.x - p2.x) + (p2.x - p1.x) * (point.y - p2.y)) / area;
-	float beta = ((p2.y - p0.y) * (point.x - p2.x) + (p0.x - p2.x) * (point.y - p2.y)) / area;
-	float gamma = 1 - alpha - beta;
+	m.M[0][0] = p0.x;
+	m.M[1][0] = p1.x;
+	m.M[2][0] = p2.x;
+	m.M[0][1] = p0.y;
+	m.M[1][1] = p1.y;
+	m.M[2][1] = p2.y;
+	m.M[0][2] = 1;
+	m.M[1][2] = 1;
+	m.M[2][2] = 1;
+	m.Inverse();
 
-	return Vector3(alpha, beta, gamma);
+	return m;
 }
 
 Color Image::InterpolateColor(const Color& c0, const Color& c1, const Color& c2, const Vector3& barycentric) {
-	// Interpolate the color components using the barycentric coordinates
+	// Interpolamos los colores utilizando las coords baricentricas
 	float r = c0.r * barycentric.x + c1.r * barycentric.y + c2.r * barycentric.z;
 	float g = c0.g * barycentric.x + c1.g * barycentric.y + c2.g * barycentric.z;
 	float b = c0.b * barycentric.x + c1.b * barycentric.y + c2.b * barycentric.z;
-	//float a = c0.a * barycentric.x + c1.a * barycentric.y + c2.a * barycentric.z;
 
 	return Color(r, g, b);
 }
