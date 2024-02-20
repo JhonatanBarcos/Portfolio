@@ -63,11 +63,18 @@ void Application::Init(void)
 //key pressed
 void Application::Render(void)
 {
+
+	//clear the frame buffer and the depth buffer
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	shader->Enable();
 	mesh->Render();
 	shader->Disable();
 
-	framebuffer.Render();
+
+
+	//framebuffer.Render();
+
 };
 
 // Called after render
