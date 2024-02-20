@@ -4,7 +4,9 @@
 #include "utils.h"
 #include "entity.h"
 
-
+Mesh quad = Mesh();
+Shader* shader = new Shader();
+Texture* texture = new Texture();
 
 Application::Application(const char* caption, int width, int height)
 {
@@ -47,13 +49,15 @@ void Application::Init(void)
 	entity_lee = new Entity("meshes/lee.obj", modelM2);
 	entity_lee->SetMatrix(-1.0f, 0.0f, 0.0f);
 
-	//Init mesh
-	mesh = new Mesh();
-	mesh->LoadOBJ("meshes/lee.obj");
-	
 	//Init shader
-	shader = new Shader();
 	shader = Shader::Get("shaders/default.vs", "shaders/default.fs");
+	
+	//Init texture
+	texture = Texture::Get("res/images/fruits.png");
+
+	//Init quad mesh
+	quad.CreateQuad();
+
 
 	
 
@@ -68,7 +72,11 @@ void Application::Render(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	shader->Enable();
-	mesh->Render();
+	shader->SetFloat("u_time", time);
+	shader->SetTexture("u_texture", texture);
+
+	quad.Render(GL_TRIANGLES);
+
 	shader->Disable();
 
 
