@@ -7,6 +7,18 @@
 Mesh quad = Mesh();
 Shader* shader = new Shader();
 Texture* texture = new Texture();
+bool ex1 = false;
+bool ex2 = false;
+bool ex3 = false;
+bool ex4 = false;
+bool subExA = false;
+bool subExB = false;
+bool subExC = false;
+bool subExD = false;
+bool subExE = false;
+bool subExF = false;
+float option;
+
 
 Application::Application(const char* caption, int width, int height)
 {
@@ -50,6 +62,7 @@ void Application::Init(void)
 	entity_lee->SetMatrix(-1.0f, 0.0f, 0.0f);
 */
 
+
 	//Init shader
 	shader = Shader::Get("shaders/quad.vs", "shaders/quad.fs");
 	
@@ -73,7 +86,65 @@ void Application::Render(void)
 	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	shader->Enable();
-	shader->SetFloat("u_option", key);
+	if(ex1 == true){
+		if(subExA == true){
+			option = 1.1;
+		} else if(subExB == true){
+			option = 1.2;
+		} else if(subExC == true){
+			option = 1.3;
+		} else if(subExD == true){
+			option = 1.4;
+		} else if(subExE == true){
+			option = 1.5;
+		} else if(subExF == true){
+			option = 1.6;
+		}
+	} else if(ex2 == true){
+		if(subExA == true){
+			option = 2.1;
+		} else if(subExB == true){
+			option = 2.2;
+		} else if(subExC == true){
+			option = 2.3;
+		} else if(subExD == true){
+			option = 2.4;
+		} else if(subExE == true){
+			option = 2.5;
+		} else if(subExF == true){
+			option = 2.6;
+		}
+	} else if(ex3 == true){
+		if(subExA == true){
+			option = 3.1;
+		} else if(subExB == true){
+			option = 3.2;
+		} else if(subExC == true){
+			option = 3.3;
+		} else if(subExD == true){
+			option = 3.4;
+		} else if(subExE == true){
+			option = 3.5;
+		} else if(subExF == true){
+			option = 3.6;
+		}
+	} else if(ex4 == true){
+		if(subExA == true){
+			option = 4.1;
+		} else if(subExB == true){
+			option = 4.2;
+		} else if(subExC == true){
+			option = 4.3;
+		} else if(subExD == true){
+			option = 4.4;
+		} else if(subExE == true){
+			option = 4.5;
+		} else if(subExF == true){
+			option = 4.6;
+		}
+	}
+
+	shader->SetFloat("u_option", option);
 	//shader->SetTexture("u_texture", texture);
 	quad.Render();
 
@@ -98,17 +169,16 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
 	// KEY CODES: https://wiki.libsdl.org/SDL2/SDL_Keycode
 	switch(event.keysym.sym) {
 		case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
-		case SDLK_1: // Handle SDLK_1 separately
-			if (event.keysym.mod & KMOD_LSHIFT && event.keysym.sym == SDLK_a) { // Check for combination of SDLK_1 and SDLK_a
-				key = 1.0;
-			}
-			if(event.keysym.mod & KMOD_LSHIFT && event.keysym.sym == SDLK_b) { // Check for combination of SDLK_1 and SDLK_b
-				key = 2.0;
-			}
-			break;
-		case SDLK_2: key = 2.0; break;
-		case SDLK_3: key = 3; break;
-		case SDLK_4: key = 4; break;
+		case SDLK_1: ex1 = true; ex2 = false; ex3 = false; ex4 = false; break;
+		case SDLK_2: ex1 = false; ex2 = true; ex3 = false; ex4 = false; break;
+		case SDLK_3: ex1 = false; ex2 = false; ex3 = true; ex4 = false; break;
+		case SDLK_4: ex1 = false; ex2 = false; ex3 = false; ex4 = true; break;
+		case SDLK_a: subExA = true; subExB = false; subExC = false; subExD = false; subExE = false; subExF = false; break;
+		case SDLK_b: subExA = false; subExB = true; subExC = false; subExD = false; subExE = false; subExF = false; break;
+		case SDLK_c: subExA = false; subExB = false; subExC = true; subExD = false; subExE = false; subExF = false; break;
+		case SDLK_d: subExA = false; subExB = false; subExC = false; subExD = true; subExE = false; subExF = false; break;
+		case SDLK_e: subExA = false; subExB = false; subExC = false; subExD = false; subExE = true; subExF = false; break;
+		case SDLK_f: subExA = false; subExB = false; subExC = false; subExD = false; subExE = false; subExF = true; break;
 	}
 }
 

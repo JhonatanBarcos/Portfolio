@@ -16,18 +16,16 @@ void main()
 	vec3 black = vec3(1,1,1);
 
 	// 1.a
-	if(u_option == 1.0){
+	if(u_option == 1.1){
 		vec3 color = mix(vec3(0,0,1), vec3(1,0,0), v_uv.x);
 		gl_FragColor = vec4(color,1.0);
 	}
 
 	//1.b
-	if(u_option == 2.0){
-		vec2 center = vec2(v_uv.x*0.5, v_uv.y*0.5);
-		float radius = 0.25;
-		vec4 color = vec4(black, 1.0);
-		float d = distance(v_uv, center);
-		gl_FragColor = d * color;
+	if(u_option == 1.2){
+
+		vec3 c2 = vec3(distance(vec2(0.5*u_aspect_ratio,0.5*u_aspect_ratio), v_uv));
+		gl_FragColor = vec4(c2, 1.0);
 
 	}
 
