@@ -5,5 +5,6 @@ void main()
 	// Remember the UV's range [0.0, 1.0]
 	v_uv = gl_MultiTexCoord0.xy;
 
-	gl_Position = ...;
+    // Set vertex position to create a full-screen quad
+    gl_Position = vec4(2.0 * gl_Vertex.xy - 1.0, 0.0, 1.0);
 }

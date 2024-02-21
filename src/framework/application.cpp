@@ -38,7 +38,7 @@ void Application::Init(void)
 
 	camera.LookAt(eye, center, up);
 	camera.SetPerspective(45, static_cast<float>(framebuffer.width) / framebuffer.height, 0.01f, 100);
-
+/*
 	//Init entities
 	entity_anna = new Entity("meshes/anna.obj", modelM);
 	entity_anna->SetMatrix(0.0f, 0.0f, 0.0f);
@@ -48,9 +48,10 @@ void Application::Init(void)
 
 	entity_lee = new Entity("meshes/lee.obj", modelM2);
 	entity_lee->SetMatrix(-1.0f, 0.0f, 0.0f);
+*/
 
 	//Init shader
-	shader = Shader::Get("shaders/default.vs", "shaders/default.fs");
+	shader = Shader::Get("shaders/quad.vs", "shaders/quad.fs");
 	
 	//Init texture
 	texture = Texture::Get("res/images/fruits.png");
@@ -69,13 +70,12 @@ void Application::Render(void)
 {
 
 	//clear the frame buffer and the depth buffer
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	shader->Enable();
-	shader->SetFloat("u_time", time);
-	shader->SetTexture("u_texture", texture);
-
-	quad.Render(GL_TRIANGLES);
+	//shader->SetFloat("u_option", key);
+	//shader->SetTexture("u_texture", texture);
+	quad.Render();
 
 	shader->Disable();
 
@@ -98,10 +98,10 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
 	// KEY CODES: https://wiki.libsdl.org/SDL2/SDL_Keycode
 	switch(event.keysym.sym) {
 		case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
-		case SDLK_c: key = 1; break;
-		case SDLK_z: key = 2; break;
-		case SDLK_t: key = 3; break;
-		case SDLK_1: key = 4; break;
+		case SDLK_1: key = 1.0; break;
+		case SDLK_2: key = 2; break;
+		case SDLK_3: key = 3; break;
+		case SDLK_4: key = 4; break;
 	}
 }
 
