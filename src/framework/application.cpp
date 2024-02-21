@@ -73,7 +73,7 @@ void Application::Render(void)
 	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	shader->Enable();
-	//shader->SetFloat("u_option", key);
+	shader->SetFloat("u_option", key);
 	//shader->SetTexture("u_texture", texture);
 	quad.Render();
 
@@ -92,14 +92,21 @@ void Application::Update(float seconds_elapsed)
 
 }
 
-//keyboard press event 
+//keyboard press event
 void Application::OnKeyPressed( SDL_KeyboardEvent event )
 {
 	// KEY CODES: https://wiki.libsdl.org/SDL2/SDL_Keycode
 	switch(event.keysym.sym) {
 		case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
-		case SDLK_1: key = 1.0; break;
-		case SDLK_2: key = 2; break;
+		case SDLK_1: // Handle SDLK_1 separately
+			if (event.keysym.mod & KMOD_LSHIFT && event.keysym.sym == SDLK_a) { // Check for combination of SDLK_1 and SDLK_a
+				key = 1.0;
+			}
+			if(event.keysym.mod & KMOD_LSHIFT && event.keysym.sym == SDLK_b) { // Check for combination of SDLK_1 and SDLK_b
+				key = 2.0;
+			}
+			break;
+		case SDLK_2: key = 2.0; break;
 		case SDLK_3: key = 3; break;
 		case SDLK_4: key = 4; break;
 	}
