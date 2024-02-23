@@ -22,11 +22,11 @@ void main()
 	}
 
 	//1.b
-	if(u_option == 1.2){
-
-		vec3 c2 = vec3(distance(vec2(0.5*u_aspect_ratio,0.5*u_aspect_ratio), v_uv));
-		gl_FragColor = vec4(c2, 1.0);
-
+	if(u_option == 2.1){
+		vec2 center = vec2(u_aspectRatio*0.5);
+		vec4 color = vec4(black, 1.0);
+		float d = distance(v_uv, center);
+		gl_FragColor = d * color;
 	}
 
 	

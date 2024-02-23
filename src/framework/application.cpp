@@ -18,6 +18,7 @@ bool subExD = false;
 bool subExE = false;
 bool subExF = false;
 float option;
+float u_aspect_ratio; 
 
 
 Application::Application(const char* caption, int width, int height)
@@ -61,7 +62,8 @@ void Application::Init(void)
 	entity_lee = new Entity("meshes/lee.obj", modelM2);
 	entity_lee->SetMatrix(-1.0f, 0.0f, 0.0f);
 */
-
+	//update aspect ratio
+	u_aspect_ratio = static_cast<float>(framebuffer.width) / framebuffer.height;
 
 	//Init shader
 	shader = Shader::Get("shaders/quad.vs", "shaders/quad.fs");
@@ -145,6 +147,7 @@ void Application::Render(void)
 	}
 
 	shader->SetFloat("u_option", option);
+	shader->SetFloat("u_aspect_ratio", u_aspect_ratio);
 	//shader->SetTexture("u_texture", texture);
 	quad.Render();
 
@@ -169,10 +172,10 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
 	// KEY CODES: https://wiki.libsdl.org/SDL2/SDL_Keycode
 	switch(event.keysym.sym) {
 		case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
-		case SDLK_1: ex1 = true; ex2 = false; ex3 = false; ex4 = false; break;
-		case SDLK_2: ex1 = false; ex2 = true; ex3 = false; ex4 = false; break;
-		case SDLK_3: ex1 = false; ex2 = false; ex3 = true; ex4 = false; break;
-		case SDLK_4: ex1 = false; ex2 = false; ex3 = false; ex4 = true; break;
+		case SDLK_1: ex1 = true; ex2 = false; ex3 = false; ex4 = false; subExA= false; subExB = false; subExC = false; subExD = false; subExE = false; subExF = false; break;
+		case SDLK_2: ex1 = false; ex2 = true; ex3 = false; ex4 = false; subExA= false; subExB = false; subExC = false; subExD = false; subExE = false; subExF = false; break;
+		case SDLK_3: ex1 = false; ex2 = false; ex3 = true; ex4 = false; subExA= false; subExB = false; subExC = false; subExD = false; subExE = false; subExF = false; break;
+		case SDLK_4: ex1 = false; ex2 = false; ex3 = false; ex4 = true; subExA= false; subExB = false; subExC = false; subExD = false; subExE = false; subExF = false; break;
 		case SDLK_a: subExA = true; subExB = false; subExC = false; subExD = false; subExE = false; subExF = false; break;
 		case SDLK_b: subExA = false; subExB = true; subExC = false; subExD = false; subExE = false; subExF = false; break;
 		case SDLK_c: subExA = false; subExB = false; subExC = true; subExD = false; subExE = false; subExF = false; break;
