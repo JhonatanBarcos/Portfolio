@@ -17,7 +17,7 @@ void main()
 
 	// 1.a
 	if(u_option == 1.1){
-		vec3 color = mix(vec3(0,0,1), vec3(1,0,0), v_uv.x);
+		vec3 color = mix(blue, red, v_uv.x);
 		gl_FragColor = vec4(color,1.0);
 	}
 
