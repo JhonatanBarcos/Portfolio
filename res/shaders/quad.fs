@@ -146,8 +146,7 @@ void main()
 		// Obtenemos el color del fragmento de la textura en las coordenadas de textura v_uv
 		vec4 texture_color = texture2D(u_texture, v_uv);
 
-
-		// Calculamos el valor de desenfoque interpolando suavemente entre 0 y intensityBlur 
+		// Calculamos el valor de desenfoque interpolando basadonos en la distancia al centro
 		float vignetting = smoothstep(0.0, 0.9, d);
 
 		// Aplicamos el desenfoque al color del fragmento mezclando con el color original
@@ -159,7 +158,34 @@ void main()
 
 	//2.f
 	if (u_option == 2.6){
+		// Definir el número de muestras de desenfoque
+		int numSamples = 10;
 
+		// Calcular el tamaño del paso para cada muestra
+		vec2 stepSize = 3.0 / vec2(textureSize(u_texture, 0));
+
+		// Inicializar el color acumulado
+		vec4 accumulatedColor = vec4(0.0);
+
+		// Realizar el desenfoque muestreando los píxeles vecinos
+		for (int i = -numSamples; i <= numSamples; i++) {
+			for (int j = -numSamples; j <= numSamples; j++) {
+				// Calcular el desplazamiento para la muestra actual
+				vec2 offset = vec2(float(i), float(j)) * stepSize;
+
+				// Muestrear el color de la textura en la posición desplazada
+				vec4 sampleColor = texture2D(u_texture, v_uv + offset);
+
+				// Acumular el color
+				accumulatedColor += sampleColor;
+			}
+		}
+
+		// Calcular el color promedio
+		vec4 blurredColor = accumulatedColor / float((2 * numSamples + 1) * (2 * numSamples + 1));
+
+		// Asignar el color desenfocado al fragmento
+		gl_FragColor = blurredColor;
 
 	}
 
