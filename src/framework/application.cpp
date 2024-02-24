@@ -4,6 +4,7 @@
 #include "utils.h"
 #include "entity.h"
 
+// Global variables
 Mesh quad = Mesh();
 Mesh mesh = Mesh();
 Shader* shader = new Shader();
@@ -54,21 +55,8 @@ void Application::Init(void)
 
 	camera.LookAt(eye, center, up);
 	camera.SetPerspective(45, static_cast<float>(framebuffer.width) / framebuffer.height, 0.01f, 100);
-/*
-	//Init entities
-	entity_anna = new Entity("meshes/anna.obj", modelM);
-	entity_anna->SetMatrix(0.0f, 0.0f, 0.0f);
 
-	entity_cleo = new Entity("meshes/cleo.obj", modelM1);
-	entity_cleo->SetMatrix(1.0f, 0.0f, 0.0f);
-
-	entity_lee = new Entity("meshes/lee.obj", modelM2);
-	entity_lee->SetMatrix(-1.0f, 0.0f, 0.0f);
-*/
-	//update aspect ratio
-	u_aspect_ratio = window_width/window_height;
-
-	//Init shader
+	//Init shaders
 	shader = Shader::Get("shaders/quad.vs", "shaders/quad.fs");
 
 	shader_entity = Shader::Get("shaders/raster.vs", "shaders/raster.fs");
@@ -83,21 +71,12 @@ void Application::Init(void)
 	mesh.LoadOBJ("meshes/lee.obj");
 	texture_entity->Load("textures/lee_color_specular.tga");
 	entity = new Entity(mesh, texture_entity, shader_entity);
-
-
-	
-
 }
 
 // Render one frame
 //key pressed
 void Application::Render(void)
 {
-
-	//clear the frame buffer and the depth buffer
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	shader->Enable();
 
 	if(ex1 == true){
 		if(subExA == true){
@@ -140,14 +119,14 @@ void Application::Render(void)
 
 	if (1.1 <= option <= 3.2 ){
 		//3.1-2-3
+		shader->Enable();
 		shader->SetFloat("u_option", option);
-		shader->SetFloat("u_aspect_ratio", u_aspect_ratio);
 		shader->SetTexture("u_texture", texture);
 		shader->SetFloat("u_time", time);
 		quad.Render();
 		shader->Disable();
 	}
-	
+
 	if (option == 4.0){
 		//3.4
 		shader_entity->Enable();
@@ -156,12 +135,6 @@ void Application::Render(void)
 		entity->Render();
 		shader_entity->Disable();
 	}
-
-
-
-
-	//framebuffer.Render();
-
 };
 
 // Called after render

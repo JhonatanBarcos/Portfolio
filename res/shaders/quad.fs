@@ -1,6 +1,5 @@
 varying vec2 v_uv;
 uniform float u_option;
-uniform float u_aspectRatio;
 uniform sampler2D u_texture;
 uniform float u_time;
 

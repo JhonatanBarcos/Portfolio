@@ -16,7 +16,8 @@ Entity::Entity(Mesh mesh, Texture* texture, Shader* shader){
 // Methods
 void Entity::Render(){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
+    glEnable(GL_DEPTH_TEST);
+
     // Habilitamos el shader
     shader->Enable();
 
@@ -24,17 +25,15 @@ void Entity::Render(){
     shader->SetMatrix44("u_model", this->modelMatrix);
 
     // Enlazamos la textura al shader
-    texture->Bind();
     shader->SetTexture("u_texture", texture);
 
     // Renderizamos la malla del objeto
     mesh.Render();
 
     // Desenlazamos la textura y deshabilitamos el shader
-    texture->Unbind();
     shader->Disable();
 
-    glEnable(GL_DEPTH_TEST);
+    glDisable(GL_DEPTH_TEST);
 }
 
 
