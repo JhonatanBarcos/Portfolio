@@ -2,6 +2,7 @@ varying vec2 v_uv;
 uniform float u_option;
 uniform float u_aspectRatio;
 uniform sampler2D u_texture;
+uniform float u_time;
 
 float dx = distance(v_uv.x,0.5);
 float dy = distance(v_uv.y,0.5);
@@ -187,13 +188,51 @@ void main()
 
 	//APARTAT 3
 
+	//3.a Pixelization
 	if (u_option == 3.1){
-		//
+		// Definimos el tamaño de los píxeles
+		vec2 pixelSize = vec2(0.05, 0.05);
+
+		// Calculamos la coordenada de la esquina inferior izquierda del píxel
+		vec2 pixelCoord = floor(v_uv / pixelSize) * pixelSize;
+
+		// Muestreamos el color de la textura en la coordenada del píxel
+		vec4 pixelColor = texture2D(u_texture, pixelCoord);
+
+		// Asignamos el color del píxel al fragmento
+		gl_FragColor = pixelColor;
 	}
 
+	//3.b Invertion coords
 	if (u_option == 3.2){
-		//
+
+		// Obtenemos las coordenadas de textura originales
+		vec2 originalUV = gl_FragCoord.xy / vec2(textureSize(u_texture, 0));
+
+		// Invertimos las coordenadas de textura horizontalmente
+		vec2 invertedUV = vec2(1.0 - originalUV.x, originalUV.y);
+
+		// Obtenemos el color de la textura en las coordenadas de textura invertidas
+		vec4 invertedColor = texture(u_texture, invertedUV);
+
+		// Asignamos el color del píxel al fragmento
+		gl_FragColor = invertedColor;
+}
+
+
+// APARTAT 4
+
+	if (u_option == 4.1){
+		// Obtenemos el color del fragmento de la textura en las coordenadas de textura v_uv
+		vec4 texture_color = texture2D(u_texture, v_uv);
+
+		// Calculamos la intensidad de gris del color del fragmento
+		float gray = dot(texture_color.rgb, vec3(0.3333));
+
+		// Creamos un nuevo color para el fragmento utilizando la intensidad de gris 
+		gl_FragColor = vec4(vec3(gray), texture_color.a);
 	}
+	
 
 }
 

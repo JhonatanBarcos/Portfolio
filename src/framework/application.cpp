@@ -6,6 +6,7 @@
 
 Mesh quad = Mesh();
 Shader* shader = new Shader();
+Shader* shader_entity = new Shader();
 Texture* texture = new Texture();
 bool ex1 = false;
 bool ex2 = false;
@@ -66,6 +67,8 @@ void Application::Init(void)
 
 	//Init shader
 	shader = Shader::Get("shaders/quad.vs", "shaders/quad.fs");
+	
+	shader_entity = Shader::Get("shaders/simple.vs", "shaders/simple.fs");
 	
 	//Init texture
 	texture = Texture::Get("images/fruits.png");
@@ -128,9 +131,20 @@ void Application::Render(void)
 		} 
 	}
 
+	//3.1-2-3
 	shader->SetFloat("u_option", option);
 	shader->SetFloat("u_aspect_ratio", u_aspect_ratio);
 	shader->SetTexture("u_texture", texture);
+	shader->SetFloat("u_time", time);
+
+	//3.4
+	shader_entity->SetFloat("u_option", option);
+	shader_entity->SetFloat("u_aspect_ratio", u_aspect_ratio);
+	shader_entity->SetTexture("u_texture", texture);
+	shader_entity->SetFloat("u_time", time);
+	shader_entity->SetMatrix44("u_viewprojection", camera.viewprojection_matrix);
+
+
 	quad.Render();
 	shader->Disable();
 
