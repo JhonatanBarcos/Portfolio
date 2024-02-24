@@ -134,14 +134,30 @@ void main()
 		// Calculamos la intensidad de gris del color del fragmento
 		float gray = dot(texture_color.rgb, vec3(0.3333));
 
+		// Definimos un umbral para la intensidad de gris
+		float threshold = 0.5;
+
 		// Creamos un nuevo color para el fragmento utilizando la intensidad de gris con un umbral de 0.5
-		gl_FragColor = vec4(vec3(step(0.5, gray)), texture_color.a);
+		gl_FragColor = vec4(vec3(step(threshold, gray)), texture_color.a);
 	}
 
 	//2.e
 	if (u_option == 2.5){
 		// Obtenemos el color del fragmento de la textura en las coordenadas de textura v_uv
 		vec4 texture_color = texture2D(u_texture, v_uv);
+
+		// Definimos la intensidad de desenfoque
+		floar intensityBlur = 0.1
+
+		// Aplicamos un desenfoque en los bordes basandonos en la distancia al centro
+		float blur = intensityBlur * d;
+
+		// Aplicamos el desenfoque al color del fragmento
+		vec4 blurColor = texture_color + vec4(blur, blur, blur, 0.0);
+
+		// Creamos un nuevo color para el fragmento utilizando la intensidad de gris con un umbral de 0.5
+		gl_FragColor = blurColor;
+
 
 
 	}
