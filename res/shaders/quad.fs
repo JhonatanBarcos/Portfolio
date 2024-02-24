@@ -158,31 +158,26 @@ void main()
 
 	//2.f
 	if (u_option == 2.6){
-		// Definir el número de muestras de desenfoque
-		int numSamples = 10;
-
-		// Calcular el tamaño del paso para cada muestra
+		// Calculamos el tamaño del paso para cada muestra
 		vec2 stepSize = 3.0 / vec2(textureSize(u_texture, 0));
 
-		// Inicializar el color acumulado
+		// Inicializamos el color acumulado
 		vec4 accumulatedColor = vec4(0.0);
 
-		// Realizar el desenfoque muestreando los píxeles vecinos
-		for (int i = -numSamples; i <= numSamples; i++) {
-			for (int j = -numSamples; j <= numSamples; j++) {
+		// Realizamos el desenfoque muestreando los píxeles vecinos
+		for (int i = -10; i <= 10; i++) {
+			for (int j = -10; j <= 10; j++) {
 				// Calcular el desplazamiento para la muestra actual
 				vec2 offset = vec2(float(i), float(j)) * stepSize;
 
-				// Muestrear el color de la textura en la posición desplazada
+				// Muestreamos el color de la textura en la posición desplazada
 				vec4 sampleColor = texture2D(u_texture, v_uv + offset);
-
-				// Acumular el color
 				accumulatedColor += sampleColor;
 			}
 		}
 
 		// Calcular el color promedio
-		vec4 blurredColor = accumulatedColor / float((2 * numSamples + 1) * (2 * numSamples + 1));
+		vec4 blurredColor = accumulatedColor / float((21) * (21));
 
 		// Asignar el color desenfocado al fragmento
 		gl_FragColor = blurredColor;
