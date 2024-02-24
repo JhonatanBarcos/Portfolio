@@ -121,29 +121,11 @@ void Application::Render(void)
 			option = 3.1;
 		} else if(subExB == true){
 			option = 3.2;
-		} else if(subExC == true){
-			option = 3.3;
-		} else if(subExD == true){
-			option = 3.4;
-		} else if(subExE == true){
-			option = 3.5;
-		} else if(subExF == true){
-			option = 3.6;
-		}
+		} 
 	} else if(ex4 == true){
 		if(subExA == true){
 			option = 4.1;
-		} else if(subExB == true){
-			option = 4.2;
-		} else if(subExC == true){
-			option = 4.3;
-		} else if(subExD == true){
-			option = 4.4;
-		} else if(subExE == true){
-			option = 4.5;
-		} else if(subExF == true){
-			option = 4.6;
-		}
+		} 
 	}
 
 	shader->SetFloat("u_option", option);

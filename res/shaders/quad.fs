@@ -146,20 +146,32 @@ void main()
 		// Obtenemos el color del fragmento de la textura en las coordenadas de textura v_uv
 		vec4 texture_color = texture2D(u_texture, v_uv);
 
-		// Definimos la intensidad de desenfoque
-		floar intensityBlur = 0.1
 
-		// Aplicamos un desenfoque en los bordes basandonos en la distancia al centro
-		float blur = intensityBlur * d;
+		// Calculamos el valor de desenfoque interpolando suavemente entre 0 y intensityBlur 
+		float vignetting = smoothstep(0.0, 0.9, d);
 
-		// Aplicamos el desenfoque al color del fragmento
-		vec4 blurColor = texture_color + vec4(blur, blur, blur, 0.0);
+		// Aplicamos el desenfoque al color del fragmento mezclando con el color original
+		vec3 vignettingColor = mix(texture_color, texture_color - white, vignetting);
 
-		// Creamos un nuevo color para el fragmento utilizando la intensidad de gris con un umbral de 0.5
-		gl_FragColor = blurColor;
+		// Asignamos el color resultante al fragmento
+		gl_FragColor = vec4(vignettingColor,1.0);
+	}
+
+	//2.f
+	if (u_option == 2.6){
 
 
+	}
 
+
+	//APARTAT 3
+
+	if (u_option == 3.1){
+		//
+	}
+
+	if (u_option == 3.2){
+		//
 	}
 
 }
