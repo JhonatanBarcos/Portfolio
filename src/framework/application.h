@@ -18,6 +18,7 @@ public:
 	SDL_Window* window = nullptr;
 	int window_width;
 	int window_height;
+	float u_aspect_ratio;
 	Camera camera;
 	Matrix44 modelM; 
 	Matrix44 modelM1;

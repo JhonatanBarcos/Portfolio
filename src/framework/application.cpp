@@ -18,7 +18,6 @@ bool subExD = false;
 bool subExE = false;
 bool subExF = false;
 float option;
-float u_aspect_ratio; 
 
 
 Application::Application(const char* caption, int width, int height)
@@ -63,13 +62,13 @@ void Application::Init(void)
 	entity_lee->SetMatrix(-1.0f, 0.0f, 0.0f);
 */
 	//update aspect ratio
-	u_aspect_ratio = static_cast<float>(framebuffer.width) / framebuffer.height;
+	u_aspect_ratio = window_width/window_height;
 
 	//Init shader
 	shader = Shader::Get("shaders/quad.vs", "shaders/quad.fs");
 	
 	//Init texture
-	texture = Texture::Get("res/images/fruits.png");
+	texture = Texture::Get("images/fruits.png");
 
 	//Init quad mesh
 	quad.CreateQuad();
@@ -88,6 +87,7 @@ void Application::Render(void)
 	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	shader->Enable();
+
 	if(ex1 == true){
 		if(subExA == true){
 			option = 1.1;
@@ -148,9 +148,8 @@ void Application::Render(void)
 
 	shader->SetFloat("u_option", option);
 	shader->SetFloat("u_aspect_ratio", u_aspect_ratio);
-	//shader->SetTexture("u_texture", texture);
+	shader->SetTexture("u_texture", texture);
 	quad.Render();
-
 	shader->Disable();
 
 
