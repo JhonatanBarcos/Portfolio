@@ -1,24 +1,40 @@
 #include "entity.h"
+#include "application.h"
+#include "image.h"
 
 // Default constructor
-Entity::Entity() {
+Entity::Entity() {}
 
-}
-
-// Constructor with parameters
-Entity::Entity(Matrix44& modelMatrix, const Mesh& mesh) {
-    this->modelMatrix = modelMatrix;
+// Constructor LAB 4 
+Entity::Entity(Mesh mesh, Texture* texture, Shader* shader){
     this->mesh = mesh;
-}
-
-Entity::Entity(const char* filename, Matrix44 modelMatrix) {
     this->modelMatrix = Matrix44();
-    this->mesh.LoadOBJ(filename);
+    this->texture = texture;
+    this->shader = shader;
 }
 
 // Methods
 void Entity::Render(){
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
+    // Habilitamos el shader
+    shader->Enable();
+
+    // Establecemos la matriz de modelo en el shader
+    shader->SetMatrix44("u_model", this->modelMatrix);
+
+    // Enlazamos la textura al shader
+    texture->Bind();
+    shader->SetTexture("u_texture", texture);
+
+    // Renderizamos la malla del objeto
+    mesh.Render();
+
+    // Desenlazamos la textura y deshabilitamos el shader
+    texture->Unbind();
+    shader->Disable();
+
+    glEnable(GL_DEPTH_TEST);
 }
 
 

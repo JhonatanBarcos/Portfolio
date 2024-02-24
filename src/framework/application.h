@@ -24,10 +24,6 @@ public:
 	Matrix44 modelM1;
 	Matrix44 modelM2;
 	Matrix44 modelM3;
-	Entity* entity_anna; 
-	Entity* entity_cleo;
-	Entity* entity_lee;
-	Entity* entity_for;
 	bool rightClick;
 	bool leftClick;
 	float time;

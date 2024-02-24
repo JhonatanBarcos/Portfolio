@@ -5,9 +5,12 @@
 #include "entity.h"
 
 Mesh quad = Mesh();
+Mesh mesh = Mesh();
 Shader* shader = new Shader();
 Shader* shader_entity = new Shader();
 Texture* texture = new Texture();
+Texture* texture_entity = new Texture();
+Entity* entity; 
 bool ex1 = false;
 bool ex2 = false;
 bool ex3 = false;
@@ -67,14 +70,19 @@ void Application::Init(void)
 
 	//Init shader
 	shader = Shader::Get("shaders/quad.vs", "shaders/quad.fs");
-	
-	shader_entity = Shader::Get("shaders/simple.vs", "shaders/simple.fs");
-	
+
+	shader_entity = Shader::Get("shaders/raster.vs", "shaders/raster.fs");
+
 	//Init texture
 	texture = Texture::Get("images/fruits.png");
 
 	//Init quad mesh
 	quad.CreateQuad();
+
+	//Init mesh
+	mesh.LoadOBJ("meshes/lee.obj");
+	texture_entity->Load("textures/lee_color_specular.tga");
+	entity = new Entity(mesh, texture_entity, shader_entity);
 
 
 	
@@ -126,27 +134,29 @@ void Application::Render(void)
 			option = 3.2;
 		} 
 	} else if(ex4 == true){
-		if(subExA == true){
-			option = 4.1;
-		} 
+		option = 4.0;
 	}
 
-	//3.1-2-3
-	shader->SetFloat("u_option", option);
-	shader->SetFloat("u_aspect_ratio", u_aspect_ratio);
-	shader->SetTexture("u_texture", texture);
-	shader->SetFloat("u_time", time);
 
-	//3.4
-	shader_entity->SetFloat("u_option", option);
-	shader_entity->SetFloat("u_aspect_ratio", u_aspect_ratio);
-	shader_entity->SetTexture("u_texture", texture);
-	shader_entity->SetFloat("u_time", time);
-	shader_entity->SetMatrix44("u_viewprojection", camera.viewprojection_matrix);
+	if (1.1 <= option <= 3.2 ){
+		//3.1-2-3
+		shader->SetFloat("u_option", option);
+		shader->SetFloat("u_aspect_ratio", u_aspect_ratio);
+		shader->SetTexture("u_texture", texture);
+		shader->SetFloat("u_time", time);
+		quad.Render();
+		shader->Disable();
+	}
+	
+	if (option == 4.0){
+		//3.4
+		shader_entity->Enable();
+		shader_entity->SetFloat("u_option", option);
+		shader_entity->SetMatrix44("u_viewprojection", camera.viewprojection_matrix);
+		entity->Render();
+		shader_entity->Disable();
+	}
 
-
-	quad.Render();
-	shader->Disable();
 
 
 

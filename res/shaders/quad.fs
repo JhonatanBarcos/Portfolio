@@ -217,22 +217,7 @@ void main()
 
 		// Asignamos el color del píxel al fragmento
 		gl_FragColor = invertedColor;
-}
-
-
-// APARTAT 4
-
-	if (u_option == 4.1){
-		// Obtenemos el color del fragmento de la textura en las coordenadas de textura v_uv
-		vec4 texture_color = texture2D(u_texture, v_uv);
-
-		// Calculamos la intensidad de gris del color del fragmento
-		float gray = dot(texture_color.rgb, vec3(0.3333));
-
-		// Creamos un nuevo color para el fragmento utilizando la intensidad de gris 
-		gl_FragColor = vec4(vec3(gray), texture_color.a);
 	}
-	
 
 }
 
