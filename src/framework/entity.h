@@ -2,6 +2,7 @@
 #include "application.h"
 #include "mesh.h"
 #include "camera.h"
+#include "material.h"
 
 class Entity {
 private:
@@ -9,6 +10,7 @@ private:
     Mesh mesh;
     Texture* texture;
     Shader* shader;
+    Material* material;
 
 public:
     // Constructor
@@ -17,6 +19,7 @@ public:
 
     //Methods
     void Render();
+    void Render(sUniformData uniformData);
     void Entity::Update(float dt);
     void SetMatrix(float x, float y, float z);
 

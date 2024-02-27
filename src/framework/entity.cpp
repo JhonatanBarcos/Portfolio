@@ -11,6 +11,7 @@ Entity::Entity(Mesh mesh, Texture* texture, Shader* shader){
     this->modelMatrix = Matrix44();
     this->texture = texture;
     this->shader = shader;
+    this->material = new Material(shader, texture, Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), 1.0);
 }
 
 // Methods
@@ -34,6 +35,16 @@ void Entity::Render(){
     shader->Disable();
 
     glDisable(GL_DEPTH_TEST);
+}
+
+void Entity::Render(sUniformData uniformData){
+    uniformData.model_matrix = this->modelMatrix;
+    uniformData.viewprojection_matrix = uniformData.viewprojection_matrix;
+    uniformData.eye = uniformData.eye;
+    
+    this->material->Enable(uniformData);
+    this->mesh.Render();
+    this->material->Disable();
 }
 
 

@@ -11,6 +11,7 @@ Shader* shader = new Shader();
 Shader* shader_entity = new Shader();
 Texture* texture = new Texture();
 Texture* texture_entity = new Texture();
+sUniformData data;
 Entity* entity; 
 bool ex1 = false;
 bool ex2 = false;
@@ -132,7 +133,7 @@ void Application::Render(void)
 		shader_entity->Enable();
 		shader_entity->SetFloat("u_option", option);
 		shader_entity->SetMatrix44("u_viewprojection", camera.viewprojection_matrix);
-		entity->Render();
+		entity->Render(data);
 		shader_entity->Disable();
 	}
 };
