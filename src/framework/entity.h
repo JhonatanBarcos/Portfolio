@@ -5,14 +5,13 @@
 #include "material.h"
 
 class Entity {
-private:
+    public:
     Matrix44 modelMatrix;
     Mesh mesh;
     Texture* texture;
     Shader* shader;
     Material* material;
 
-public:
     // Constructor
     Entity();
     Entity(Mesh mesh, Texture* texture, Shader* shader);

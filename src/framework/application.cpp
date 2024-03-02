@@ -10,7 +10,9 @@ Mesh mesh = Mesh();
 Shader* shader = new Shader();
 Shader* shader_entity = new Shader();
 Texture* texture = new Texture();
-Texture* texture_entity = new Texture();
+Texture* texture_normal = new Texture();
+Texture* texture_color = new Texture();
+Material* material = new Material();
 sUniformData data;
 Entity* entity; 
 bool ex1 = false;
@@ -59,19 +61,31 @@ void Application::Init(void)
 
 	//Init shaders
 	shader = Shader::Get("shaders/quad.vs", "shaders/quad.fs");
-
-	shader_entity = Shader::Get("shaders/raster.vs", "shaders/raster.fs");
-
-	//Init texture
-	texture = Texture::Get("images/fruits.png");
+	shader_entity = Shader::Get("shaders/gourand.vs", "shaders/gourand.fs");
 
 	//Init quad mesh
 	quad.CreateQuad();
 
 	//Init mesh
 	mesh.LoadOBJ("meshes/lee.obj");
-	texture_entity->Load("textures/lee_color_specular.tga");
-	entity = new Entity(mesh, texture_entity, shader_entity);
+	texture_normal->Load("textures/lee_color_specular.tga");
+	texture_color->Load("textures/lee_normal.tga");
+
+	//Init entity
+	entity = new Entity(mesh, texture_color, shader_entity);
+	material = new Material(shader, texture_color, texture_normal, Vector3(0.2, 0.2, 0.2), Vector3(0.8, 0.8, 0.8), Vector3(0.0, 0.0, 0.0), 1.0);
+	entity->material = material;
+
+	// Init light
+    data.light.pos = Vector3(0.0f, 0.0f, 0.0f); 
+    data.light.Id = Vector3(1.0f, 1.0f, 1.0f); 
+    data.light.Is = Vector3(1.0f, 1.0f, 1.0f); 
+
+    // Initit uniform data
+    data.Ia = Vector3(0.2f, 0.2f, 0.2f); 
+    data.model_matrix = entity->modelMatrix; 
+    data.viewprojection_matrix = camera.viewprojection_matrix; 
+    data.eye = eye; 
 }
 
 // Render one frame
@@ -79,63 +93,13 @@ void Application::Init(void)
 void Application::Render(void)
 {
 
-	if(ex1 == true){
-		if(subExA == true){
-			option = 1.1;
-		} else if(subExB == true){
-			option = 1.2;
-		} else if(subExC == true){
-			option = 1.3;
-		} else if(subExD == true){
-			option = 1.4;
-		} else if(subExE == true){
-			option = 1.5;
-		} else if(subExF == true){
-			option = 1.6;
-		}
-	} else if(ex2 == true){
-		if(subExA == true){
-			option = 2.1;
-		} else if(subExB == true){
-			option = 2.2;
-		} else if(subExC == true){
-			option = 2.3;
-		} else if(subExD == true){
-			option = 2.4;
-		} else if(subExE == true){
-			option = 2.5;
-		} else if(subExF == true){
-			option = 2.6;
-		}
-	} else if(ex3 == true){
-		if(subExA == true){
-			option = 3.1;
-		} else if(subExB == true){
-			option = 3.2;
-		} 
-	} else if(ex4 == true){
-		option = 4.0;
-	}
 
+	shader_entity->Enable();
+	shader_entity->SetFloat("u_option", option);
+	shader_entity->SetMatrix44("u_viewprojection", camera.viewprojection_matrix);
+	entity->Render(data);
+	shader_entity->Disable();
 
-	if (1.1 <= option <= 3.2 ){
-		//3.1-2-3
-		shader->Enable();
-		shader->SetFloat("u_option", option);
-		shader->SetTexture("u_texture", texture);
-		shader->SetFloat("u_time", time);
-		quad.Render();
-		shader->Disable();
-	}
-
-	if (option == 4.0){
-		//3.4
-		shader_entity->Enable();
-		shader_entity->SetFloat("u_option", option);
-		shader_entity->SetMatrix44("u_viewprojection", camera.viewprojection_matrix);
-		entity->Render(data);
-		shader_entity->Disable();
-	}
 };
 
 // Called after render

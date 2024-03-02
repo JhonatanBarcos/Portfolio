@@ -5,13 +5,14 @@
 // Default constructor
 Entity::Entity() {}
 
-// Constructor LAB 4 
+// Constructor
 Entity::Entity(Mesh mesh, Texture* texture, Shader* shader){
     this->mesh = mesh;
     this->modelMatrix = Matrix44();
     this->texture = texture;
     this->shader = shader;
-    this->material = new Material(shader, texture, Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), 1.0);
+    // Create a new Material object with the correct constructor arguments
+    this->material = new Material(shader, texture, nullptr, Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), 1.0f);
 }
 
 // Methods
@@ -41,11 +42,11 @@ void Entity::Render(sUniformData uniformData){
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     this->material->Enable(uniformData);
-    this->shader->Enable(); // Enable the shader
-    this->shader->SetMatrix44("u_model", this->modelMatrix); // Set the model matrix in the shader
-    this->shader->SetTexture("u_texture", texture); // Bind the texture to the shader
-    this->mesh.Render(); // Render the mesh
-    this->shader->Disable(); // Disable the shader
+    this->shader->Enable(); 
+    this->shader->SetMatrix44("u_model", this->modelMatrix); 
+    this->shader->SetTexture("u_texture", texture); 
+    this->mesh.Render(); 
+    this->shader->Disable(); 
     this->material->Disable();
     glDisable(GL_DEPTH_TEST);
 }
