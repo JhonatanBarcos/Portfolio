@@ -38,22 +38,22 @@ void Entity::Render(){
 }
 
 void Entity::Render(sUniformData uniformData){
-    uniformData.model_matrix = this->modelMatrix;
-    uniformData.viewprojection_matrix = uniformData.viewprojection_matrix;
-    uniformData.eye = uniformData.eye;
-    
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
     this->material->Enable(uniformData);
-    this->mesh.Render();
+    this->shader->Enable(); // Enable the shader
+    this->shader->SetMatrix44("u_model", this->modelMatrix); // Set the model matrix in the shader
+    this->shader->SetTexture("u_texture", texture); // Bind the texture to the shader
+    this->mesh.Render(); // Render the mesh
+    this->shader->Disable(); // Disable the shader
     this->material->Disable();
+    glDisable(GL_DEPTH_TEST);
 }
-
-
 
 void Entity::Update(float dt) {
     this->modelMatrix.Translate(0.01, 0.00, 0.0);
     this->modelMatrix.Rotate(1*DEG2RAD, Vector3(0, 1, 0));
-
- }
+}
 
 void Entity::SetMatrix(float x, float y, float z) {
     this->modelMatrix.SetTranslation(x, y, z);

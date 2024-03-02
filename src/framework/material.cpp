@@ -15,7 +15,6 @@ Material::Material(Shader* s, Texture* t, Vector3 ka, Vector3 kd, Vector3 ks, fl
 }
 
 void Material::Enable(const sUniformData& uniformData) {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	shader->Enable();
 
 	shader->SetMatrix44("u_model", uniformData.model_matrix);
