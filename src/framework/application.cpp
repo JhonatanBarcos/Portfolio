@@ -60,20 +60,16 @@ void Application::Init(void)
 	camera.SetPerspective(45, static_cast<float>(framebuffer.width) / framebuffer.height, 0.01f, 100);
 
 	//Init shaders
-	shader = Shader::Get("shaders/quad.vs", "shaders/quad.fs");
 	shader_entity = Shader::Get("shaders/gourand.vs", "shaders/gourand.fs");
-
-	//Init quad mesh
-	quad.CreateQuad();
 
 	//Init mesh
 	mesh.LoadOBJ("meshes/lee.obj");
-	texture_normal->Load("textures/lee_color_specular.tga");
-	texture_color->Load("textures/lee_normal.tga");
+	texture_color->Load("textures/lee_color_specular.tga");
+	texture_normal->Load("textures/lee_normal.tga");
 
 	//Init entity
 	entity = new Entity(mesh, texture_color, shader_entity);
-	material = new Material(shader, texture_color, texture_normal, Vector3(0.2, 0.2, 0.2), Vector3(0.8, 0.8, 0.8), Vector3(0.0, 0.0, 0.0), 1.0);
+	material = new Material(shader_entity, texture_color, texture_normal, Vector3(0.2, 0.2, 0.2), Vector3(0.8, 0.8, 0.8), Vector3(0.0, 0.0, 0.0), 1.0);
 	entity->material = material;
 
 	// Init light

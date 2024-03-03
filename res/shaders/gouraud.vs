@@ -1,60 +1,54 @@
-//Global variables from the CPU
-//Material Properties
-uniform vec3 Ka;
-uniform vec3 Kd;
-uniform vec3 Ks;
-uniform float shininess;
-//3D properties
-uniform mat4 u_modelMatrix;
-//Camera properties
-uniform mat4 u_viewProjection;
-uniform vec3 cameraPosition;
-//Light Properties
-uniform vec3 Ia;
-uniform vec3 lightPosition;
-uniform vec3 Id;
-uniform vec3 Is;
+uniform mat4 u_model;
+uniform mat4 u_viewprojection;
+uniform vec3 u_ka;
+uniform vec3 u_kd;
+uniform vec3 u_ks;
+uniform vec3 u_Id;
+uniform vec3 u_Is;
+uniform vec3 u_Ia;
+uniform vec3 u_lightPos;
+uniform vec3 u_eye;
+uniform float u_shininess;
 
-//Uniform variables
+// Variables to pass to the fragment shader
 varying vec2 v_uv;
 varying vec3 v_world_position;
 varying vec3 v_world_normal;
-//Variable to pass to the fragment shader
-varying vec3 Ip;
+varying vec3 v_final_color;
 
-void main(){
-    v_uv = gl_MultiTexCoord0.xy;
+//here create uniforms for all the data we need here
+
+void main()
+{	
+	v_uv = gl_MultiTexCoord0.xy;
+	//apply formula
+	vec3 Ip;
 
 	// Convert local position to world space
-	vec3 world_position = (u_modelMatrix * vec4( gl_Vertex.xyz, 1.0)).xyz;
-
+	vec3 world_position = (u_model * vec4( gl_Vertex.xyz, 1.0)).xyz;
+	
 	// Convert local normal to world space
-	vec3 world_normal = (u_modelMatrix * vec4( gl_Normal.xyz, 0.0)).xyz;
+	vec3 world_normal = (u_model * vec4( gl_Normal.xyz, 0.0)).xyz;
+
+	vec3 L = u_lightPos - world_position;
+	vec3 V = u_eye - world_position;
+	vec3 R = reflect(-L, world_normal);
+	L = normalize(L);
+	V = normalize(V);
+	R = normalize(R);
+
+	float dot1 = dot(L, world_normal);
+	float dot2 = dot(R, V);
+	dot1 = clamp(dot1, 0.0, 1.0);
+	dot2 = clamp(dot2, 0.0, 1.0);
+
+	Ip = u_ka*u_Ia + (u_kd*dot1*u_Id + u_ks*pow(dot2, u_shininess)*u_Is);
 
 	// Pass them to the fragment shader interpolated
 	v_world_position = world_position;
 	v_world_normal = world_normal;
-
+	v_final_color = Ip;
+	
 	// Project the vertex using the model view projection matrix
-	gl_Position = u_viewProjection * vec4(world_position, 1.0); //output of the vertex shader
-
-    //Phong-Model
-
-    vec3 position = gl_Position.xyz;
-    float dist_ = distance(position,lightPosition);
-    vec3 N = world_normal;
-    normalize(N);
-    vec3 L = lightPosition-position;
-    normalize(L);
-    vec3 V = cameraPosition-position;
-    normalize(V);
-    vec3 inv_L=  (-1.0)*L;
-    vec3 R = reflect(inv_L, N);
-    normalize(R);
-    
-    float dot_l_n = dot(L,N);
-    float dot_r_v = dot(R,V);
-
-    Ip = Ka*Ia +(Kd*(clamp(dot_l_n,0.0,1.0))*Id+ Ks*pow(clamp(dot_r_v,0.0,1.0),shininess)*Is)/pow(dist_,2.0);
-
+	gl_Position = u_viewprojection * vec4(world_position, 1.0); //output of the vertex shader
 }
