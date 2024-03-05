@@ -38,7 +38,7 @@ void main()
 	vec3 ks = v_ks;
 
     // Check the usage of each texture
-    if (u_option.x == 1.0) { // Use color texture for diffuse and ambient
+    if (u_option.x == 1.0) { // Use color texture 
         ka *= texture_color.xyz;
         kd = texture_color.xyz;
         //ks = vec3(texture_color.a); 
