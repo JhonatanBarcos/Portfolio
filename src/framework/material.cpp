@@ -46,3 +46,7 @@ void Material::Enable(const sUniformData& uniformData) {
 void Material::Disable() {
     this->shader->Disable();
 }
+
+void Material::SetShader(Shader* s) {
+	this->shader = s;
+}

@@ -25,7 +25,7 @@ struct sUniformData {
 
 class Material{
 
-    private:
+    public:
         Shader* shader;
         Texture* normal;
         Texture* color;
@@ -33,10 +33,10 @@ class Material{
         Vector3 kd;
         Vector3 ks;
         float shininess;
-    
-    public:
+
         Material();
         Material(Shader* s, Texture* c, Texture* n, Vector3 ka, Vector3 kd, Vector3 ks, float alpha);
         void Enable(const sUniformData& uniformData);
         void Disable();
+        void SetShader(Shader* s);
 };

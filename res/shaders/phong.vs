@@ -9,12 +9,21 @@ uniform vec3 u_Ia;
 uniform vec3 u_lightPos;
 uniform vec3 u_eye;
 uniform float u_shininess;
+uniform vec3 u_option;
 
 // Variables to pass to the fragment shader
 varying vec2 v_uv;
 varying vec3 v_world_position;
 varying vec3 v_world_normal;
-varying vec3 v_Ip;
+varying vec3 v_ka;
+varying vec3 v_kd;
+varying vec3 v_ks;
+varying vec3 v_Id;
+varying vec3 v_Ia;
+varying vec3 v_Is;
+varying vec3 v_lightPos;
+varying vec3 v_eye;
+varying mat4 v_model;
 
 //here create uniforms for all the data we need here
 
@@ -30,24 +39,18 @@ void main()
 	// Convert local normal to world space
 	vec3 world_normal = (u_model * vec4( gl_Normal.xyz, 0.0)).xyz;
 
-	vec3 L = u_lightPos - world_position;
-	vec3 V = u_eye - world_position;
-	vec3 R = reflect(-L, world_normal);
-	L = normalize(L);
-	V = normalize(V);
-	R = normalize(R);
-
-	float dot1 = dot(L, world_normal);
-	float dot2 = dot(R, V);
-	dot1 = clamp(dot1, 0.0, 1.0);
-	dot2 = clamp(dot2, 0.0, 1.0);
-
-	Ip = u_ka*u_Ia + (u_kd*dot1*u_Id + u_ks*pow(dot2, u_shininess)*u_Is);
-
 	// Pass them to the fragment shader interpolated
 	v_world_position = world_position;
 	v_world_normal = world_normal;
-	v_Ip = Ip;
+	v_ka = u_ka;
+	v_kd = u_kd;
+	v_ks = u_ks;
+	v_Id = u_Id;
+	v_Ia = u_Ia;
+	v_Is = u_Is;
+	v_lightPos = u_lightPos;
+	v_eye = u_eye;
+	v_model = u_model;
 	
 	// Project the vertex using the model view projection matrix
 	gl_Position = u_viewprojection * vec4(world_position, 1.0); //output of the vertex shader

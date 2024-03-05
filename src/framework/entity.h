@@ -21,6 +21,7 @@ class Entity {
     void Render(sUniformData uniformData);
     void Entity::Update(float dt);
     void SetMatrix(float x, float y, float z);
+    void SetShader(Shader* s);
 
     //Others
     bool negZ1 = true;

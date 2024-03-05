@@ -5,42 +5,36 @@
 #include "entity.h"
 
 // Global variables
-Mesh quad = Mesh();
-Mesh mesh = Mesh();
-Shader* shader = new Shader();
-Shader* shader_entity = new Shader();
-Texture* texture = new Texture();
-Texture* texture_normal = new Texture();
-Texture* texture_color = new Texture();
-Material* material = new Material();
+Mesh mesh;
+Shader* shader;
+Shader* shaderg;
+Shader* shaderp;
+Texture* texture_normal;
+Texture* texture_color;
+Material* material;
 sUniformData data;
-Entity* entity; 
-bool ex1 = false;
-bool ex2 = false;
-bool ex3 = false;
-bool ex4 = false;
-bool subExA = false;
-bool subExB = false;
-bool subExC = false;
-bool subExD = false;
-bool subExE = false;
-bool subExF = false;
-float option;
+Entity* entity;
+Vector3 option = (0,0,0);
 
+bool normal = false;
+bool color = false;
+bool specular = false;
+bool one_light = true;
+bool two_light = false;
 
 Application::Application(const char* caption, int width, int height)
 {
-	this->window = createWindow(caption, width, height);
+    this->window = createWindow(caption, width, height);
 
-	int w,h;
-	SDL_GetWindowSize(window,&w,&h);
+    int w, h;
+    SDL_GetWindowSize(window, &w, &h);
 
-	this->mouse_state = 0;
-	this->time = 0.f;
-	this->window_width = w;
-	this->window_height = h;
-	this->keystate = SDL_GetKeyboardState(nullptr);
-	this->framebuffer.Resize(w, h);
+    this->mouse_state = 0;
+    this->time = 0.f;
+    this->window_width = w;
+    this->window_height = h;
+    this->keystate = SDL_GetKeyboardState(nullptr);
+    this->framebuffer.Resize(w, h);
 }
 
 Application::~Application()
@@ -49,151 +43,209 @@ Application::~Application()
 
 void Application::Init(void)
 {
-	std::cout << "Initiating app..." << std::endl;
+    std::cout << "Initiating app..." << std::endl;
 
-	//Init camera
-	Vector3 eye = Vector3(0.0f, 0.0f, 5.0f);
-	Vector3 center = Vector3(0.0f, 0.0f, 0.0f);
-	Vector3 up = Vector3(0.0f, 1.0f, 0.0f);
+    // Init camera
+    Vector3 eye(0.0f, 0.0f, 5.0f);
+    Vector3 center(0.0f, 0.0f, 0.0f);
+    Vector3 up(0.0f, 1.0f, 0.0f);
 
-	camera.LookAt(eye, center, up);
-	camera.SetPerspective(45, static_cast<float>(framebuffer.width) / framebuffer.height, 0.01f, 100);
+    camera.LookAt(eye, center, up);
+    camera.SetPerspective(45, static_cast<float>(framebuffer.width) / framebuffer.height, 0.01f, 100);
 
-	//Init shaders
-	shader_entity = Shader::Get("shaders/gourand.vs", "shaders/gourand.fs");
+    // Init mesh
+    mesh.LoadOBJ("meshes/lee.obj");
 
-	//Init mesh
-	mesh.LoadOBJ("meshes/lee.obj");
-	texture_color->Load("textures/lee_color_specular.tga");
-	texture_normal->Load("textures/lee_normal.tga");
+    // Init textures
+    texture_color = new Texture();
+    texture_color->Load("textures/lee_color_specular.tga");
+
+    texture_normal = new Texture();
+    texture_normal->Load("textures/lee_normal.tga");
+
+
+	//Init shader by default without ilumination
+	shader = Shader::Get("/shaders/raster.vs", "/shaders/raster.fs");
+	shaderp = Shader::Get("/shaders/phong.vs", "/shaders/phong.fs");
+	shaderg = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
 
 	//Init entity
-	entity = new Entity(mesh, texture_color, shader_entity);
-	material = new Material(shader_entity, texture_color, texture_normal, Vector3(0.2, 0.2, 0.2), Vector3(0.8, 0.8, 0.8), Vector3(0.0, 0.0, 0.0), 1.0);
-	entity->material = material;
+	entity = new Entity(mesh, texture_color, shader);
+    material = new Material(shader, texture_color, texture_normal, Vector3(0.1, 0.1, 0.1), Vector3(1.0, 1.0, 1.0), Vector3(0.5, 0.5, 0.5), 0.5);
+    entity->material = material;
 
-	// Init light
-    data.light.pos = Vector3(0.0f, 0.0f, 0.0f); 
-    data.light.Id = Vector3(1.0f, 1.0f, 1.0f); 
-    data.light.Is = Vector3(1.0f, 1.0f, 1.0f); 
+    // Init light
+    data.light.pos = Vector3(0.0f, 2.0f, 1.0f);
+    data.light.Id = Vector3(1.0f, 1.0f, 1.0f);
+    data.light.Is = Vector3(1.0f, 1.0f, 1.0f);
 
-    // Initit uniform data
-    data.Ia = Vector3(0.2f, 0.2f, 0.2f); 
-    data.model_matrix = entity->modelMatrix; 
-    data.viewprojection_matrix = camera.viewprojection_matrix; 
-    data.eye = eye; 
+    // Init uniform data
+    data.Ia = Vector3(0.2f, 0.2f, 0.2f);
+    data.viewprojection_matrix = camera.viewprojection_matrix;
+    data.eye = eye;
 }
 
-// Render one frame
-//key pressed
 void Application::Render(void)
 {
+    // Enable shader
+    shader->Enable();
+    shader->SetVector3("u_option", option);
 
+    // Update camera
+    data.viewprojection_matrix = camera.viewprojection_matrix;
+    data.eye = camera.eye;
+    shader->SetMatrix44("u_viewprojection", camera.viewprojection_matrix);
 
-	shader_entity->Enable();
-	shader_entity->SetFloat("u_option", option);
-	shader_entity->SetMatrix44("u_viewprojection", camera.viewprojection_matrix);
-	entity->Render(data);
-	shader_entity->Disable();
+    // Render entitys
+    entity->Render(data);
 
-};
+    // Disable shader
+    shader->Disable();
 
-// Called after render
+    
+}
+
 void Application::Update(float seconds_elapsed)
 {
-
-
 }
 
-//keyboard press event
-void Application::OnKeyPressed( SDL_KeyboardEvent event )
+void Application::OnKeyPressed(SDL_KeyboardEvent event)
 {
-	// KEY CODES: https://wiki.libsdl.org/SDL2/SDL_Keycode
-	switch(event.keysym.sym) {
-		case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
-		case SDLK_1: ex1 = true; ex2 = false; ex3 = false; ex4 = false; subExA= false; subExB = false; subExC = false; subExD = false; subExE = false; subExF = false; break;
-		case SDLK_2: ex1 = false; ex2 = true; ex3 = false; ex4 = false; subExA= false; subExB = false; subExC = false; subExD = false; subExE = false; subExF = false; break;
-		case SDLK_3: ex1 = false; ex2 = false; ex3 = true; ex4 = false; subExA= false; subExB = false; subExC = false; subExD = false; subExE = false; subExF = false; break;
-		case SDLK_4: ex1 = false; ex2 = false; ex3 = false; ex4 = true; subExA= false; subExB = false; subExC = false; subExD = false; subExE = false; subExF = false; break;
-		case SDLK_a: subExA = true; subExB = false; subExC = false; subExD = false; subExE = false; subExF = false; break;
-		case SDLK_b: subExA = false; subExB = true; subExC = false; subExD = false; subExE = false; subExF = false; break;
-		case SDLK_c: subExA = false; subExB = false; subExC = true; subExD = false; subExE = false; subExF = false; break;
-		case SDLK_d: subExA = false; subExB = false; subExC = false; subExD = true; subExE = false; subExF = false; break;
-		case SDLK_e: subExA = false; subExB = false; subExC = false; subExD = false; subExE = true; subExF = false; break;
-		case SDLK_f: subExA = false; subExB = false; subExC = false; subExD = false; subExE = false; subExF = true; break;
-	}
+    switch (event.keysym.sym) {
+    case SDLK_ESCAPE: exit(0); break;
+
+     case SDLK_g: 
+        if (shader != shaderg) {
+            shader = shaderg;
+            entity->material->SetShader(shader);
+			entity->SetShader(shader);
+            std::cout << "Switched to Gouraud shading" << std::endl;
+        }
+        break;
+
+    case SDLK_p: 
+        if (shader != shaderp) {
+            shader = shaderp;
+            entity->material->SetShader(shader);
+			entity->SetShader(shader);
+            std::cout << "Switched to Phong shading" << std::endl;
+        }
+        break;
+
+    case SDLK_c: 
+        if (shader == shaderp) {
+            if (option.x != 1.0) {
+                option.x = 1.0;
+                std::cout << "Using color texture" << std::endl;
+            } else {
+                option.x = 0.0;
+                std::cout << "Not using color texture" << std::endl;
+            }
+        } 
+        break;
+
+    case SDLK_s: 
+        if (shader == shaderp) {
+            if (option.y != 1.0) {
+                // Apply specular texture if neesded
+                option.y = 1.0;
+                std::cout << "Using specular texture" << std::endl;
+            } else {
+                // Disable specular texture if needed
+                option.y = 0.0;
+                std::cout << "Not using specular texture" << std::endl;
+            }
+        } 
+        break;
+
+    case SDLK_n: 
+        if (shader == shaderp) {
+            if (option.z != 1.0) {
+                // Apply normal texture if needed
+				option.z = 1.0;
+                std::cout << "Using normal texture" << std::endl;
+            } else {
+                // Disable normal texture if needed
+				option.z = 0.0;
+                std::cout << "Not using normal texture" << std::endl;
+            }
+        }  
+        break;
+
+    case SDLK_1: 
+        // Handle number of lights in the scene
+        // Implement your logic here
+        break;
+
+    case SDLK_2: 
+        // Handle number of lights in the scene
+        // Implement your logic here
+        break;
+    }
 }
 
-void Application::OnMouseButtonDown( SDL_MouseButtonEvent event )
+void Application::OnMouseButtonDown(SDL_MouseButtonEvent event)
 {
-	if (event.button == SDL_BUTTON_LEFT) {
-		leftClick = true;
-		mouse_position.x = static_cast<float>(event.x);
-		mouse_position.y = static_cast<float>(event.y);
+    if (event.button == SDL_BUTTON_LEFT) {
+        leftClick = true;
+        mouse_position.x = static_cast<float>(event.x);
+        mouse_position.y = static_cast<float>(event.y);
+    }
 
-	}
+    if (event.button == SDL_BUTTON_RIGHT) {
+        rightClick = true;
 
-	if (event.button == SDL_BUTTON_RIGHT) {
+        // Clean screen
+        framebuffer.Fill(Color::BLACK);
 
-		rightClick = true;
-		//clean screen
-		framebuffer.Fill(Color::BLACK);
+        mouse_position.x = static_cast<float>(event.x);
+        mouse_position.y = static_cast<float>(event.y);
 
-		mouse_position.x = static_cast<float>(event.x);
-		mouse_position.y = static_cast<float>(event.y);
+        float normalizedX = (2.0f * mouse_position.x) / window_width - 1.0f;
+        float normalizedY = 1.0f - (2.0f * mouse_position.y) / window_height;
 
-		float normalizedX = (2.0f * mouse_position.x) / window_width - 1.0f;
-		float normalizedY = 1.0f - (2.0f * mouse_position.y) / window_height;
+        Vector3 center(normalizedX, normalizedY, camera.GetCenter().z);
 
-
-		Vector3 center = Vector3(normalizedX, normalizedY, camera.GetCenter().z);
-
-		camera.LookAt(camera.GetEye(),center,camera.GetUp());
-		camera.UpdateViewMatrix();
-	}
-	
+        camera.LookAt(camera.GetEye(), center, camera.GetUp());
+        camera.UpdateViewMatrix();
+    }
 }
 
-void Application::OnMouseButtonUp( SDL_MouseButtonEvent event )
+void Application::OnMouseButtonUp(SDL_MouseButtonEvent event)
 {
-	if (event.button == SDL_BUTTON_LEFT) {
-		leftClick = false;
-	}
+    if (event.button == SDL_BUTTON_LEFT) {
+        leftClick = false;
+    }
 
-	if (event.button == SDL_BUTTON_RIGHT) {
-		rightClick = false;
-	
-	}
-
+    if (event.button == SDL_BUTTON_RIGHT) {
+        rightClick = false;
+    }
 }
 
 void Application::OnMouseMove(SDL_MouseButtonEvent event)
 {
-	if (event.button == SDL_BUTTON_LEFT) {
-		//clean screen
-		framebuffer.Fill(Color::BLACK);
+    if (event.button == SDL_BUTTON_LEFT) {
+        // Clean screen
+        framebuffer.Fill(Color::BLACK);
 
-		//orbit
-		camera.Orbit(-mouse_delta.x * 0.01, Vector3::UP);
-		camera.Orbit(-mouse_delta.y * 0.01, Vector3::RIGHT);
-	}
-
-
+        // Orbit
+        camera.Orbit(-mouse_delta.x * 0.01, Vector3::UP);
+        camera.Orbit(-mouse_delta.y * 0.01, Vector3::RIGHT);
+    }
 }
 
 void Application::OnWheel(SDL_MouseWheelEvent event)
 {
-	float dy = event.preciseY;
+    float dy = event.preciseY;
 
-	//clean screen
-	framebuffer.Fill(Color::BLACK);
+    // Clean screen
+    framebuffer.Fill(Color::BLACK);
 
-	//zoom
-	camera.Zoom(dy < 0 ? 1.1 : 0.9);
-
+    // Zoom
+    camera.Zoom(dy < 0 ? 1.1 : 0.9);
 }
 
 void Application::OnFileChanged(const char* filename)
-{ 
-	Shader::ReloadSingleShader(filename);
+{
+    Shader::ReloadSingleShader(filename);
 }

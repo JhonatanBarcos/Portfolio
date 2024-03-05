@@ -60,4 +60,9 @@ void Entity::SetMatrix(float x, float y, float z) {
     this->modelMatrix.SetTranslation(x, y, z);
 }
 
+void Entity::SetShader(Shader* s) {
+    this->shader = s;
+}
+
+
 
