@@ -15,7 +15,7 @@ Material::Material(Shader* s,Texture* c, Texture* n, Vector3 ka, Vector3 kd, Vec
     this->shininess = alpha;
 }
 
-void Material::Enable(const sUniformData& uniformData) {
+void Material::Enable(const sUniformData& uniformData, int lightIndex) {
 	//init
 	shader->Enable();
 	shader->SetMatrix44("u_model", uniformData.model_matrix);
@@ -31,16 +31,19 @@ void Material::Enable(const sUniformData& uniformData) {
 	shader->SetTexture("u_normal", normal);
 
 	//light
-	shader->SetVector3("u_lightPos", uniformData.light.pos);
-	shader->SetVector3("u_Id", uniformData.light.Id);
-	shader->SetVector3("u_Is", uniformData.light.Is);						
-	shader->SetVector3("u_Ia", uniformData.Ia);
-	
+    if (lightIndex < uniformData.numLights) {
+        Light light = uniformData.lights[lightIndex];
+        shader->SetVector3("u_lightPos", light.pos);
+        shader->SetVector3("u_Id", light.Id);
+        shader->SetVector3("u_Is", light.Is);
+		if (lightIndex == 0) {
+			shader->SetVector3("u_Ia", uniformData.Ia);
+		}
+    }
+
 	//camera
 	shader->SetMatrix44("u_viewprojection", uniformData.viewprojection_matrix);
 	shader->SetVector3("u_eye", uniformData.eye);
-	shader->SetVector2("u_task", uniformData.task);
-
 }
 
 void Material::Disable() {

@@ -18,8 +18,9 @@ class Entity {
 
     //Methods
     void Render();
+    void Render(sUniformData uniformData, int ligthIndex);
     void Render(sUniformData uniformData);
-    void Entity::Update(float dt);
+    void Update(float dt);
     void SetMatrix(float x, float y, float z);
     void SetShader(Shader* s);
 

@@ -14,13 +14,8 @@ Texture* texture_color;
 Material* material;
 sUniformData data;
 Entity* entity;
-Vector3 option = (0,0,0);
+Vector3 option = Vector3(0);
 
-bool normal = false;
-bool color = false;
-bool specular = false;
-bool one_light = true;
-bool two_light = false;
 
 Application::Application(const char* caption, int width, int height)
 {
@@ -74,10 +69,24 @@ void Application::Init(void)
     material = new Material(shader, texture_color, texture_normal, Vector3(0.1, 0.1, 0.1), Vector3(1.0, 1.0, 1.0), Vector3(0.5, 0.5, 0.5), 0.5);
     entity->material = material;
 
-    // Init light
-    data.light.pos = Vector3(0.0f, 2.0f, 1.0f);
-    data.light.Id = Vector3(1.0f, 1.0f, 1.0f);
-    data.light.Is = Vector3(1.0f, 1.0f, 1.0f);
+	// Init light 1
+	data.lights[0].pos = Vector3(1.0f, 0.0f, 3.0f); // Posición en (1, 0, 3)
+	data.lights[0].Id = Vector3(1.0f, 1.0f, 1.0f); // Color blanc
+	data.lights[0].Is = Vector3(1.0f, 1.0f, 1.0f); // Intensidad
+
+	// Init light 2
+	data.lights[1].pos = Vector3(-2.0f, 2.0f, 1.0f); // Posición en (-2, 2, 1)
+	data.lights[1].Id = Vector3(0.0f, 1.0f, 0.0f); // Color verde
+	data.lights[1].Is = Vector3(1.0f, 1.0f, 1.0f); // Intensidad
+
+	// Init light 3
+	data.lights[2].pos = Vector3(6.0f, 3.0f, 1.0f); // Posición en (6, 3, 1)
+	data.lights[2].Id = Vector3(1.0f, 0.0f, 0.0f); // Color rojo
+	data.lights[2].Is = Vector3(1.0f, 1.0f, 1.0f); // Intensidad
+
+
+	// Set number of lights = 1
+	data.numLights = 1;
 
     // Init uniform data
     data.Ia = Vector3(0.2f, 0.2f, 0.2f);
@@ -96,14 +105,18 @@ void Application::Render(void)
     data.eye = camera.eye;
     shader->SetMatrix44("u_viewprojection", camera.viewprojection_matrix);
 
-    // Render entitys
-    entity->Render(data);
+    // Render con todas las luces
+    for (int i = 0; i < data.numLights; ++i) {
+        // Renderizar con la luz actual
+        entity->material->Enable(data, i);
+        entity->Render(data);
+    }
 
     // Disable shader
     shader->Disable();
+}
 
     
-}
 
 void Application::Update(float seconds_elapsed)
 {
@@ -174,15 +187,21 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 
     case SDLK_1: 
         // Handle number of lights in the scene
-        // Implement your logic here
+        data.numLights = 1;
         break;
 
     case SDLK_2: 
         // Handle number of lights in the scene
-        // Implement your logic here
+        data.numLights = 2;
         break;
-    }
+
+	case SDLK_3:
+		// Handle number of lights in the scene
+		data.numLights = 3;
+		break;
+	}
 }
+
 
 void Application::OnMouseButtonDown(SDL_MouseButtonEvent event)
 {

@@ -19,6 +19,7 @@ Entity::Entity(Mesh mesh, Texture* texture, Shader* shader){
 void Entity::Render(){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
 
     // Habilitamos el shader
     shader->Enable();
@@ -38,10 +39,25 @@ void Entity::Render(){
     glDisable(GL_DEPTH_TEST);
 }
 
-void Entity::Render(sUniformData uniformData){
+void Entity::Render(sUniformData uniformData) {
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
-    this->material->Enable(uniformData);
+
+    for (int i = 0; i < uniformData.numLights; ++i) {
+        material->Enable(uniformData, i);
+
+        mesh.Render();
+    }
+
+    material->Disable();
+
+    glDisable(GL_DEPTH_TEST);
+}
+
+void Entity::Render(sUniformData uniformData, int ligthIndex){
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    this->material->Enable(uniformData, ligthIndex);
     this->shader->Enable(); 
     this->shader->SetMatrix44("u_model", this->modelMatrix); 
     this->shader->SetTexture("u_texture", texture); 

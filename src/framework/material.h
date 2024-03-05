@@ -4,7 +4,7 @@
 #include "framework.h"
 #include "shader.h"
 #include "texture.h"
- #define MAX_LIGHTS 2
+#define MAX_LIGHTS 3
 
 typedef struct sLight {
 	Vector3 pos;
@@ -14,12 +14,12 @@ typedef struct sLight {
 
 
 struct sUniformData {
-	Vector3 Ia;						//variable of application
+	Vector3 Ia;						
 	Matrix44 model_matrix;
-	Matrix44 viewprojection_matrix;	//variable of camara
+	Matrix44 viewprojection_matrix;	
 	Vector3 eye;
-	Vector2 task;
-	Light light;
+	Light lights[MAX_LIGHTS];
+    int numLights;
 };
 
 
@@ -36,7 +36,7 @@ class Material{
 
         Material();
         Material(Shader* s, Texture* c, Texture* n, Vector3 ka, Vector3 kd, Vector3 ks, float alpha);
-        void Enable(const sUniformData& uniformData);
+        void Enable(const sUniformData& uniformData, int lightIndex);
         void Disable();
         void SetShader(Shader* s);
 };
