@@ -105,12 +105,8 @@ void Application::Render(void)
     data.eye = camera.eye;
     shader->SetMatrix44("u_viewprojection", camera.viewprojection_matrix);
 
-    // Render con todas las luces
-    for (int i = 0; i < data.numLights; ++i) {
-        // Renderizar con la luz actual
-        entity->material->Enable(data, i);
-        entity->Render(data);
-    }
+    // Render entitys
+    entity->Render(data);
 
     // Disable shader
     shader->Disable();
@@ -160,11 +156,9 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
     case SDLK_s: 
         if (shader == shaderp) {
             if (option.y != 1.0) {
-                // Apply specular texture if neesded
                 option.y = 1.0;
                 std::cout << "Using specular texture" << std::endl;
             } else {
-                // Disable specular texture if needed
                 option.y = 0.0;
                 std::cout << "Not using specular texture" << std::endl;
             }
@@ -174,11 +168,9 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
     case SDLK_n: 
         if (shader == shaderp) {
             if (option.z != 1.0) {
-                // Apply normal texture if needed
 				option.z = 1.0;
                 std::cout << "Using normal texture" << std::endl;
             } else {
-                // Disable normal texture if needed
 				option.z = 0.0;
                 std::cout << "Not using normal texture" << std::endl;
             }
@@ -186,17 +178,14 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
         break;
 
     case SDLK_1: 
-        // Handle number of lights in the scene
         data.numLights = 1;
         break;
 
     case SDLK_2: 
-        // Handle number of lights in the scene
         data.numLights = 2;
         break;
 
 	case SDLK_3:
-		// Handle number of lights in the scene
 		data.numLights = 3;
 		break;
 	}

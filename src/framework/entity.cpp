@@ -40,31 +40,22 @@ void Entity::Render(){
 }
 
 void Entity::Render(sUniformData uniformData) {
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
 
-    for (int i = 0; i < uniformData.numLights; ++i) {
-        material->Enable(uniformData, i);
-
-        mesh.Render();
-    }
-
-    material->Disable();
-
-    glDisable(GL_DEPTH_TEST);
-}
-
-void Entity::Render(sUniformData uniformData, int ligthIndex){
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
-    this->material->Enable(uniformData, ligthIndex);
-    this->shader->Enable(); 
-    this->shader->SetMatrix44("u_model", this->modelMatrix); 
-    this->shader->SetTexture("u_texture", texture); 
-    this->mesh.Render(); 
-    this->shader->Disable(); 
-    this->material->Disable();
-    glDisable(GL_DEPTH_TEST);
+	uniformData.model_matrix = modelMatrix;			
+	for (int i = 0; i < uniformData.numLights; i++) {
+		if (i == 0) {
+			glDisable(GL_BLEND);
+		}
+		else {
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_ONE, GL_ONE);
+		}
+		material->Enable(uniformData, i);
+		mesh.Render();
+	}
+	material->Disable();
 }
 
 void Entity::Update(float dt) {
