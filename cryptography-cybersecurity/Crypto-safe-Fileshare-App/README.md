@@ -79,7 +79,7 @@ We welcome contributions! Follow these steps:
 
 ## License
 
-This project is licensed under the MIT License. Developed by Guillermo Villar, Jonhatan and George Hallak.
+This project is licensed under the MIT License. Developed by Guillermo Villar, Jhonatan Barcos and George Hallak.
 
 ---
 
