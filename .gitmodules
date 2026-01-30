@@ -1,0 +1,3 @@
+[submodule "machine-learning/ab-data-challenge"]
+	path = machine-learning/ab-data-challenge
+	url = https://github.com/JhonatanBarcos/GeSAI-AB_Data_Challenge
